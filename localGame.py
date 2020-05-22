@@ -38,7 +38,7 @@ while not b.is_game_over():
     
     currentTime = time.time()
     sys.stdout = stringio
-    move = players[nextplayer].getPlayerMove(b) # The move must be given by "A1", ... "J8" string coordinates (not as an internal move)
+    move = players[nextplayer].getPlayerMove() # The move must be given by "A1", ... "J8" string coordinates (not as an internal move)
     sys.stdout = sysstdout
     playeroutput = stringio.getvalue()
     stringio.truncate(0)
@@ -78,4 +78,3 @@ elif result == "0-1":
     print("BLACK")
 else:
     print("DEUCE")
-

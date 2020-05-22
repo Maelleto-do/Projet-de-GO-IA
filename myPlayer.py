@@ -25,33 +25,50 @@ class myPlayer(PlayerInterface):
     def getPlayerName(self):
         return "Random Player"
 
-    def getPlayerMove(self, move):
+    def getPlayerMove(self):
         if self._board.is_game_over():
             print("Referee told me to play but the game is over!")
+            res = self._board.result()
+            if res == "1-0":
+                print("White wins")
+            if res == "0-1":
+                print("Black wins")
+            else:
+                print("equal")
             return "PASS"
 
         max = -123456
         alpha = -1234567
         beta = +1234567
+        depth = 3
 
         for move in self._board.legal_moves():
             self._board.push(move)
             print("I am playing ", self._board.move_to_str(move))
             print("My current board :")
             self._board.prettyPrint()
-            val = self.alphabeta(alpha, beta, True)
-            self._board.pop()
+            val = self.alphabeta(alpha, beta, False, depth-1)
+            # self._board.pop()
             if val > alpha:
                 alpha = val
                 best_move = move
         return Goban.Board.flat_to_name(best_move)
 
-    def alphabeta(self, alpha, beta, maximizePlayer):
+    def alphabeta(self, alpha, beta, maximizePlayer, depth):
+
+        if depth == 0 or self._board.is_game_over():
+            res = self._board.result()
+            if res == "1-0":
+                return -4000000
+            if res == "0-1":
+                return 4000000
+            else:
+                return 0
         # AMI
         if maximizePlayer:
             for move in self._board.legal_moves():
                 self._board.push(move)
-                alpha = max(alpha, self.alphabeta(alpha, beta, False))
+                alpha = max(alpha, self.alphabeta(alpha, beta, False, depth - 1))
                 self._board.pop()
                 if alpha >= beta:
                     return beta
@@ -60,7 +77,7 @@ class myPlayer(PlayerInterface):
         else:
             for move in self._board.legal_moves():
                 self._board.push(move)
-                beta = min(beta, self.alphabeta(alpha, beta, True))
+                beta = min(beta, self.alphabeta(alpha, beta, True, depth - 1))
                 self._board.pop()
                 if alpha >= beta:
                     return alpha

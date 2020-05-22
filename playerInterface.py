@@ -11,10 +11,10 @@ class PlayerInterface():
         ''' Must return the name of your AI player.'''
         return "Not Defined"
 
-    def alphabeta(self, maximizePlayer):
+    def alphabeta(self, maximizePlayer, depth):
         pass
 
-    def getPlayerMove(self, move): 
+    def getPlayerMove(self): 
         ''' This is where you will put your AI. This function must return the move as a standard
         move in GO, ie, "A1", "A2", ..., "D5", ..., "J8", "J9" or "PASS"
 
