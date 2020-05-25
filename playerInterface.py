@@ -14,6 +14,9 @@ class PlayerInterface():
     def alphabeta(self, maximizePlayer, depth):
         pass
 
+    def evaluate(self, move):
+        pass
+
     def getPlayerMove(self): 
         ''' This is where you will put your AI. This function must return the move as a standard
         move in GO, ie, "A1", "A2", ..., "D5", ..., "J8", "J9" or "PASS"

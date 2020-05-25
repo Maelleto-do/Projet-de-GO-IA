@@ -27,9 +27,9 @@ class myPlayer(PlayerInterface):
 
     def getPlayerMove(self):
 
-        max = -123456
-        alpha = -1234567
-        beta = +1234567
+        max = -100
+        alpha = -100
+        beta = +100
         depth = 3
 
         if self._board.is_game_over():
@@ -42,7 +42,7 @@ class myPlayer(PlayerInterface):
             else:
                 print("equal")
             return "PASS"
-        
+
         best_move = 0
 
         for move in self._board.legal_moves():
@@ -53,25 +53,52 @@ class myPlayer(PlayerInterface):
                 alpha = val
                 best_move = move
 
-            print("BEST MOVE " + Goban.Board.flat_to_name(best_move))
-        
+            # best_move_str = Goban.Board.flat_to_name(best_move)
+            # coord = Goban.Board.name_to_coord(best_move_str)
+            # x = coord[0]
+            # y = coord[1]
+            # neighbors = ((x+1, y), (x-1, y), (x, y+1), (x, y-1))
+            # res_neighbors = [
+            #     c for c in neighbors if self._board._isOnBoard(c[0], c[1])]
+            # print("MES COORDONNEES " + str(x) + "," + str(y))
+            # print("VOISINNNNS  " + str(res_neighbors))
+
+            # if (Goban.Board[self._board.flatten((coord[0],coord[1]))] == 0):
+            #     print("BLAAAACK")
+            # print("BEST MOVE " + Goban.Board.flat_to_name(best_move)
+            #     + " " + str(self._board[Goban.Board.flatten((coord[0],coord[1]))]) + " " + str(self._board._BLACK) )
+            # if (Goban.Board[Goban.Board.flatten((coord[0],coord[1]))] == Goban.Board._WHITE):
+            #     print("WHIIIITE")
+            #     print("BEST MOVE " + Goban.Board.flat_to_name(best_move))
+            # if self._board._nextPlayer == self._board._WHITE:
+            #     print("WHIIIITE")
+
+            # else:
+            #     print("BLAAAACK")
+            # best_move_str = Goban.Board.flat_to_name(best_move)
+            # print("COORDONEES ", Goban.Board.name_to_coord(best_move_str))
+            # print("BEST MOVE " + Goban.Board.flat_to_name(best_move))
         self._board.push(best_move)
         return Goban.Board.flat_to_name(best_move)
 
     def alphabeta(self, alpha, beta, maximizePlayer, depth):
-
-        if depth == 0 or self._board.is_game_over():
+        my_move = 0
+        if self._board.is_game_over() or depth == 0:
             res = self._board.result()
             if res == "1-0":
-                return -4000000
+                return -60
             if res == "0-1":
-                return 4000000
+                return 60
             else:
-                return 4000000
+                return self.evaluate(my_move)
+
+            
         # AMI
         if maximizePlayer:
             for move in self._board.legal_moves():
                 self._board.push(move)
+                my_move = move
+                # print("FRIEND MOVE " + Goban.Board.flat_to_name(my_move))
                 alpha = max(alpha, self.alphabeta(
                     alpha, beta, False, depth - 1))
                 self._board.pop()
@@ -82,11 +109,27 @@ class myPlayer(PlayerInterface):
         else:
             for move in self._board.legal_moves():
                 self._board.push(move)
+                # my_move = move
                 beta = min(beta, self.alphabeta(alpha, beta, True, depth - 1))
                 self._board.pop()
                 if alpha >= beta:
                     return alpha
             return beta
+
+    def evaluate(self, move):
+        move_str = Goban.Board.flat_to_name(move)
+        ufcoord = Goban.Board.name_to_coord(move_str)
+        # print("MOUVE " + move_str)
+        x = ufcoord[0]
+        y = ufcoord[1]
+        neighbors_coord = ((x+1, y), (x-1, y), (x, y+1), (x, y-1))
+        neighbors = [
+            c for c in neighbors_coord if self._board._isOnBoard(c[0], c[1])]
+        res = 0
+        for n in neighbors:
+            if self._board[Goban.Board.flatten((n[0], n[1]))] == self._board._BLACK:
+                res = res + 200
+        return res
 
     def playOpponentMove(self, move):
         print("Opponent played ", move)  # New here
