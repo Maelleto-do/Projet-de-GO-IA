@@ -28,11 +28,10 @@ class myPlayer(PlayerInterface):
 
     def getPlayerMove(self):
 
-        max = -10000
-        alpha = -10000
-        beta = +10000
+        max = -1000000
+        alpha = -1000000
+        beta = +1000000
         depth = 2
-        
 
         if self._board.is_game_over():
             print("Referee told me to play but the game is over!")
@@ -66,18 +65,17 @@ class myPlayer(PlayerInterface):
                  'G4', 'H4', 'J4', 'A5', 'B5', 'C5', 'D5', 'E5', 'F5', 'G5', 'H5',
                  'J5', 'A6', 'B6', 'C6', 'D6', 'E6', 'F6', 'G6', 'H6', 'J6', 'A7',
                  'B7', 'C7', 'D7', 'E7', 'F7', 'G7', 'H7', 'J7', 'A8', 'B8', 'C8',
-                 'D8', 'E8', 'F8', 'G8', 'H8', 'J8', 'A9', 'B9', 'C9', 'D9', 'E9', 
+                 'D8', 'E8', 'F8', 'G8', 'H8', 'J8', 'A9', 'B9', 'C9', 'D9', 'E9',
                  'F9', 'G9', 'H9', 'J9', 'PASS']
 
-        if self._board.is_game_over() or depth == 0:
+        if self._board.is_game_over():
             res = self._board.result()
             if res == "1-0":
                 return -50
             if res == "0-1":
                 return 50
             else:
-                res = self.evaluate(moves)
-                return res
+                return 0
 
         if depth == 0:
             res = self.evaluate(moves)
@@ -111,13 +109,10 @@ class myPlayer(PlayerInterface):
         for move in moves:
             # move_str = Goban.Board.flat_to_name(move)
             ufcoord = Goban.Board.name_to_coord(move)
-            if self._board.__getitem__(ufcoord) == self._board._BLACK:
-                    black_moves.append(move)
-
-            # x = ufcoord[0]
-            # y = ufcoord[1]
-            # if self._board[Goban.Board.flatten((x, y))] == self._board._BLACK:
-            #     black_moves.append(move)
+            x = ufcoord[0]
+            y = ufcoord[1]
+            if self._board[Goban.Board.flatten((x, y))] == self._board._BLACK:
+                black_moves.append(move)
 
         print("BLACK MOOOOOOVES : ", black_moves)
         for move in black_moves:
@@ -125,12 +120,18 @@ class myPlayer(PlayerInterface):
             ufcoord = Goban.Board.name_to_coord(move)
             x = ufcoord[0]
             y = ufcoord[1]
+
             neighbors_coord = ((x+1, y), (x-1, y), (x, y+1), (x, y-1))
             neighbors = [
                 c for c in neighbors_coord if self._board._isOnBoard(c[0], c[1])]
             for n in neighbors:
                 if self._board[Goban.Board.flatten((n[0], n[1]))] == self._board._BLACK:
                     res = res + 200
+
+            diag_coord = (x+1, y+1)
+            if self._board._isOnBoard(diag_coord[0], diag_coord[1]):
+                if self._board[Goban.Board.flatten((diag_coord[0], diag_coord[1]))] == self._board._BLACK:
+                    res = res + 1000
 
         return res
 
