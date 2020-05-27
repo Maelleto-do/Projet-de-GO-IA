@@ -111,10 +111,13 @@ class myPlayer(PlayerInterface):
         for move in moves:
             # move_str = Goban.Board.flat_to_name(move)
             ufcoord = Goban.Board.name_to_coord(move)
-            x = ufcoord[0]
-            y = ufcoord[1]
-            if self._board[Goban.Board.flatten((x, y))] == self._board._BLACK:
-                black_moves.append(move)
+            if self._board.__getitem__(ufcoord) == self._board._BLACK:
+                    black_moves.append(move)
+
+            # x = ufcoord[0]
+            # y = ufcoord[1]
+            # if self._board[Goban.Board.flatten((x, y))] == self._board._BLACK:
+            #     black_moves.append(move)
 
         print("BLACK MOOOOOOVES : ", black_moves)
         for move in black_moves:
