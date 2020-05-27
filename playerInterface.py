@@ -14,7 +14,7 @@ class PlayerInterface():
     def alphabeta(self, maximizePlayer, depth):
         pass
 
-    def evaluate(self):
+    def evaluate(self, moves):
         pass
 
     def getPlayerMove(self): 

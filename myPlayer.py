@@ -32,6 +32,7 @@ class myPlayer(PlayerInterface):
         alpha = -10000
         beta = +10000
         depth = 2
+        
 
         if self._board.is_game_over():
             print("Referee told me to play but the game is over!")
@@ -53,10 +54,21 @@ class myPlayer(PlayerInterface):
             if val > alpha:
                 alpha = val
                 best_move = move
+
         self._board.push(best_move)
         return Goban.Board.flat_to_name(best_move)
 
     def alphabeta(self, alpha, beta, maximizePlayer, depth):
+
+        moves = ['A1', 'B1', 'C1', 'D1', 'E1', 'F1', 'G1', 'H1', 'J1', 'A2', 'B2',
+                 'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'J2', 'A3', 'B3', 'C3', 'D3',
+                 'E3', 'F3', 'G3', 'H3', 'J3', 'A4', 'B4', 'C4', 'D4', 'E4', 'F4',
+                 'G4', 'H4', 'J4', 'A5', 'B5', 'C5', 'D5', 'E5', 'F5', 'G5', 'H5',
+                 'J5', 'A6', 'B6', 'C6', 'D6', 'E6', 'F6', 'G6', 'H6', 'J6', 'A7',
+                 'B7', 'C7', 'D7', 'E7', 'F7', 'G7', 'H7', 'J7', 'A8', 'B8', 'C8',
+                 'D8', 'E8', 'F8', 'G8', 'H8', 'J8', 'A9', 'B9', 'C9', 'D9', 'E9', 
+                 'F9', 'G9', 'H9', 'J9', 'PASS']
+
         if self._board.is_game_over() or depth == 0:
             res = self._board.result()
             if res == "1-0":
@@ -64,8 +76,12 @@ class myPlayer(PlayerInterface):
             if res == "0-1":
                 return 50
             else:
-                res = self.evaluate()
+                res = self.evaluate(moves)
                 return res
+
+        if depth == 0:
+            res = self.evaluate(moves)
+            return res
 
         # AMI
         if maximizePlayer:
@@ -81,30 +97,29 @@ class myPlayer(PlayerInterface):
         else:
             for move in self._board.legal_moves():
                 self._board.push(move)
-                beta = min(beta, self.alphabeta(alpha, beta, True, depth - 1))
+                beta = min(beta, self.alphabeta(
+                    alpha, beta, True, depth - 1))
                 self._board.pop()
                 if alpha >= beta:
                     return alpha
             return beta
 
+    def evaluate(self, moves):
 
-
-    def evaluate(self):
         black_moves = []
         res = 0
-        for move in self._board.legal_moves():
-            move_str = Goban.Board.flat_to_name(move)
-            ufcoord = Goban.Board.name_to_coord(move_str)
+        for move in moves:
+            # move_str = Goban.Board.flat_to_name(move)
+            ufcoord = Goban.Board.name_to_coord(move)
             x = ufcoord[0]
             y = ufcoord[1]
             if self._board[Goban.Board.flatten((x, y))] == self._board._BLACK:
                 black_moves.append(move)
 
-        start = timeit.timeit()
-
+        print("BLACK MOOOOOOVES : ", black_moves)
         for move in black_moves:
-            move_str = Goban.Board.flat_to_name(move)
-            ufcoord = Goban.Board.name_to_coord(move_str)
+            # move_str = Goban.Board.flat_to_name(move)
+            ufcoord = Goban.Board.name_to_coord(move)
             x = ufcoord[0]
             y = ufcoord[1]
             neighbors_coord = ((x+1, y), (x-1, y), (x, y+1), (x, y-1))
@@ -113,10 +128,6 @@ class myPlayer(PlayerInterface):
             for n in neighbors:
                 if self._board[Goban.Board.flatten((n[0], n[1]))] == self._board._BLACK:
                     res = res + 200
-        end = timeit.timeit()
-        if (start < end):
-            print("TEMPS ECOULE pour evaluation  " + str(end - start))
-
 
         return res
 
