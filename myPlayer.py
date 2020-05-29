@@ -154,12 +154,12 @@ class myPlayer(PlayerInterface):
                     c for c in neighbors_coord if self._board._isOnBoard(c[0], c[1])]
                 for n in neighbors:
                     if self._board[Goban.Board.flatten((n[0], n[1]))] == self._board._WHITE:
-                        res = res - 200
+                        res = res + 200
 
                 diag_coord = (x+1, y+1)
                 if self._board._isOnBoard(diag_coord[0], diag_coord[1]):
                     if self._board[Goban.Board.flatten((diag_coord[0], diag_coord[1]))] == self._board._WHITE:
-                        res = res - 100
+                        res = res + 100
 
 
         return res
