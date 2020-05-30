@@ -169,7 +169,7 @@ class myPlayer(PlayerInterface):
             if self._board[Goban.Board.flatten((x, y))] == self._board._WHITE:
                 white_moves.append(move)
 
-        if count <= 6: # Evaluation Fuseki pour les 6 premiers coups
+        if count <= 10: # Evaluation Fuseki pour les premiers coups
             res = self.evaluate_opening(moves, black_moves, white_moves)
             return res
 
@@ -254,7 +254,7 @@ class myPlayer(PlayerInterface):
             if (1 <= x <= 7) and (1 <= y <= 7): # se situe sur le deuxième ligne
                 res = res + ami*1000
             if ( ((1 <= x <= 2) or (6 <= x <= 7)) and ((1 <= y <= 2) or (6 <= y <= 7))): # dans un coin
-                res = res + ami*300
+                res = res + ami*500
             if y > y_max_b:
                 y_max_b = y
             if y < y_min_b:
@@ -271,7 +271,7 @@ class myPlayer(PlayerInterface):
             if (1 <= x <= 7) and (1 <= y <= 7): # se situe sur le deuxième ligne
                 res = res + ennemi*1000
             if ( ((1 <= x <= 2) or (6 <= x <= 7)) and ((1 <= y <= 2) or (6 <= y <= 7))): # dans un coin
-                res = res + ennemi*300 
+                res = res + ennemi*700
             if y > y_max_w:
                 y_max_w = y
             if y < y_min_w:
@@ -291,11 +291,11 @@ class myPlayer(PlayerInterface):
 
 
         if self._board.next_player() == self._board._BLACK:
-            if (potential_black >= abs(y_max_b - y_min_b)):
+            if (potential_black >= abs(y_max_w - y_min_w)):
                 res = res + ami*1000
                 
         else:
-            if (potential_white >= abs(y_max_w - y_min_w)):
+            if (potential_white >= abs(y_max_b - y_min_b)):
                 res = res + ennemi*1000
 
         # if (distance_black < 2) and (potential_black >= potential_white):
