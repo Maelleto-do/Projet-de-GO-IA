@@ -28,11 +28,41 @@ class myPlayer(PlayerInterface):
 
     def getPlayerMove(self):
 
-        max = -1000000
-        alpha = -1000000
-        beta = +1000000
+        max = -100000000
+        alpha = -100000000
+        beta = +100000000
         depth = 2
+        count = 0
+        best_move = 0
+        first_black = self._board.name_to_coord('C3')
+        flatt_first_black = self._board.flatten(first_black)
+        first_white = self._board.name_to_coord('G7')
+        flatt_first_white = self._board.flatten(first_white)
 
+        moves = ['A1', 'B1', 'C1', 'D1', 'E1', 'F1', 'G1', 'H1', 'J1', 'A2', 'B2',
+                 'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'J2', 'A3', 'B3', 'C3', 'D3',
+                 'E3', 'F3', 'G3', 'H3', 'J3', 'A4', 'B4', 'C4', 'D4', 'E4', 'F4',
+                 'G4', 'H4', 'J4', 'A5', 'B5', 'C5', 'D5', 'E5', 'F5', 'G5', 'H5',
+                 'J5', 'A6', 'B6', 'C6', 'D6', 'E6', 'F6', 'G6', 'H6', 'J6', 'A7',
+                 'B7', 'C7', 'D7', 'E7', 'F7', 'G7', 'H7', 'J7', 'A8', 'B8', 'C8',
+                 'D8', 'E8', 'F8', 'G8', 'H8', 'J8', 'A9', 'B9', 'C9', 'D9', 'E9',
+                 'F9', 'G9', 'H9', 'J9', 'PASS']
+
+        for move in moves:
+            ufcoord = Goban.Board.name_to_coord(move)
+            x = ufcoord[0]
+            y = ufcoord[1]
+            if (self._board[Goban.Board.flatten((x, y))] == self._board._BLACK) or (self._board[Goban.Board.flatten((x, y))] == self._board._WHITE):
+                count = count + 1
+
+
+        if count == 0:
+            self._board.push(flatt_first_black)
+            return self._board.flat_to_name(flatt_first_black)
+        if count == 1:
+            self._board.push(flatt_first_white)
+            return self._board.flat_to_name(flatt_first_white)
+            
         if self._board.is_game_over():
             print("Referee told me to play but the game is over!")
             res = self._board.result()
@@ -44,7 +74,7 @@ class myPlayer(PlayerInterface):
                 print("equal")
             return "PASS"
 
-        best_move = 0
+ 
 
         for move in self._board.legal_moves():
             self._board.push(move)
@@ -55,12 +85,10 @@ class myPlayer(PlayerInterface):
                 best_move = move
 
         self._board.push(best_move)
+
         return Goban.Board.flat_to_name(best_move)
 
     def alphabeta(self, alpha, beta, maximizePlayer, depth):
-
-
-        
         moves = ['A1', 'B1', 'C1', 'D1', 'E1', 'F1', 'G1', 'H1', 'J1', 'A2', 'B2',
                  'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'J2', 'A3', 'B3', 'C3', 'D3',
                  'E3', 'F3', 'G3', 'H3', 'J3', 'A4', 'B4', 'C4', 'D4', 'E4', 'F4',
@@ -72,14 +100,12 @@ class myPlayer(PlayerInterface):
 
         if self._board.is_game_over():
             res = self._board.result()
-            print("FIN DU JEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEU")
             if res == "1-0":
-                return -50
+                return -500
             if res == "0-1":
-                return 50
+                return 500
             else:
-                res = self.evaluate(moves, maximizePlayer)
-                return res
+                return self.evaluate(moves, maximizePlayer)
 
         if depth == 0:
             res = self.evaluate(moves, maximizePlayer)
@@ -112,12 +138,11 @@ class myPlayer(PlayerInterface):
         white_moves = []
         res = 0
 
+        # La fonction d'évaluation doit etre symétrique
         if self._board.next_player() == self._board._WHITE:
-            print("NOIRS JOUEEEEENT")
             ami = -1
             ennemi = 1
         else:
-            print("BLAAAANCS JOUEEEEENT")
             ami = 1
             ennemi = -1
 
@@ -135,13 +160,14 @@ class myPlayer(PlayerInterface):
             if self._board[Goban.Board.flatten((x, y))] == self._board._WHITE:
                 white_moves.append(move)
 
-
-
+        # On évalue la position des pions NOIRS sur le plateau
         for move in black_moves:
             ufcoord = Goban.Board.name_to_coord(move)
             x = ufcoord[0]
             y = ufcoord[1]
 
+            # Les pions ne doivent pas être eparpillés sur le plateau
+            # On favorise deux pions côte à côte
             neighbors_coord = ((x+1, y), (x-1, y), (x, y+1), (x, y-1))
             neighbors = [
                 c for c in neighbors_coord if self._board._isOnBoard(c[0], c[1])]
@@ -149,17 +175,21 @@ class myPlayer(PlayerInterface):
                 if self._board[Goban.Board.flatten((n[0], n[1]))] == self._board._BLACK:
                     res = res + ami*400
 
+            # Les pions alignés doivent former une diagonale
             diag_coord = (x+1, y+1)
             if self._board._isOnBoard(diag_coord[0], diag_coord[1]):
                 if self._board[Goban.Board.flatten((diag_coord[0], diag_coord[1]))] == self._board._BLACK:
+
                     res = res + ami*100
 
-
+        # On évalue la position des pions BLANCS sur le plateau
         for move in white_moves:
             ufcoord = Goban.Board.name_to_coord(move)
             x = ufcoord[0]
             y = ufcoord[1]
 
+            # Les pions ne doivent pas être eparpillés sur le plateau
+            # On favorise deux pions côte à côte
             neighbors_coord = ((x+1, y), (x-1, y), (x, y+1), (x, y-1))
             neighbors = [
                 c for c in neighbors_coord if self._board._isOnBoard(c[0], c[1])]
@@ -167,6 +197,7 @@ class myPlayer(PlayerInterface):
                 if self._board[Goban.Board.flatten((n[0], n[1]))] == self._board._WHITE:
                     res = res + ennemi*400
 
+            # Les pions alignés doivent former une diagonale
             diag_coord = (x-1, y+1)
             if self._board._isOnBoard(diag_coord[0], diag_coord[1]):
                 if self._board[Goban.Board.flatten((diag_coord[0], diag_coord[1]))] == self._board._WHITE:
