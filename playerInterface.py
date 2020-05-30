@@ -7,11 +7,12 @@ class PlayerInterface():
     - the gnugo player
     '''
 
+
     def getPlayerName(self):
         ''' Must return the name of your AI player.'''
         return "Not Defined"
 
-    def alphabeta(self, maximizePlayer, depth, count):
+    def alphabeta(self, maximizePlayer, depth, count, move):
         pass
 
     def getPlayerMove(self): 
@@ -30,13 +31,13 @@ class PlayerInterface():
         '''
         return "PASS" 
 
-    def evaluate_opening(self, moves, black_moves, white_moves):
+    def evaluate_opening(self, moves, black_moves, white_moves, move):
         pass
 
 
-    def evaluate(self, moves, maximizePlayer, count):
+    def evaluate(self, moves, maximizePlayer, count, move):
         pass
-    
+
     def playOpponentMove(self, move): 
         '''Inform you that the oponent has played this move. You must play it with no 
         search (just update your local variables to take it into account)

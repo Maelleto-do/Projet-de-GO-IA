@@ -22,6 +22,8 @@ class myPlayer(PlayerInterface):
     def __init__(self):
         self._board = Goban.Board()
         self._mycolor = None
+        black_goban = []
+        white_goban = []
 
     def getPlayerName(self):
         return "Random Player"
@@ -62,12 +64,12 @@ class myPlayer(PlayerInterface):
             if (self._board[Goban.Board.flatten((x, y))] == self._board._BLACK) or (self._board[Goban.Board.flatten((x, y))] == self._board._WHITE):
                 count = count + 1
 
-        if count == 0:
-            self._board.push(flatt_first_black)
-            return self._board.flat_to_name(flatt_first_black)
-        if count == 1:
-            self._board.push(flatt_first_white)
-            return self._board.flat_to_name(flatt_first_white)
+        # if count == 0:
+        #     self._board.push(flatt_first_black)
+        #     return self._board.flat_to_name(flatt_first_black)
+        # if count == 1:
+        #     self._board.push(flatt_first_white)
+        #     return self._board.flat_to_name(flatt_first_white)
         # if count == 2:
         #     self._board.push(flatt_second_black)
         #     return self._board.flat_to_name(flatt_second_black)
@@ -88,16 +90,20 @@ class myPlayer(PlayerInterface):
 
         for move in self._board.legal_moves():
             self._board.push(move)
-            val = self.alphabeta(alpha, beta, False, depth-1, count)
+            val = self.alphabeta(alpha, beta, False, depth-1, count, move)
             self._board.pop()
             if val > alpha:
                 alpha = val
                 best_move = move
 
-        self._board.push(best_move)
+        # print("BLACK ", self._board.flat_to_name(black_goban))
+        # self._board.push(best_move)
+        # if self._board.next_player() == self._board._BLACK:
+        #     black_goban.append(best_move)
+        # else: white_goban.append(best_move)
         return Goban.Board.flat_to_name(best_move)
 
-    def alphabeta(self, alpha, beta, maximizePlayer, depth, count):
+    def alphabeta(self, alpha, beta, maximizePlayer, depth, count, move):
         moves = ['A1', 'B1', 'C1', 'D1', 'E1', 'F1', 'G1', 'H1', 'J1', 'A2', 'B2',
                  'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'J2', 'A3', 'B3', 'C3', 'D3',
                  'E3', 'F3', 'G3', 'H3', 'J3', 'A4', 'B4', 'C4', 'D4', 'E4', 'F4',
@@ -117,7 +123,7 @@ class myPlayer(PlayerInterface):
                 return self.evaluate(moves, maximizePlayer, count)
 
         if depth == 0:
-            res = self.evaluate(moves, maximizePlayer, count)
+            res = self.evaluate(moves, maximizePlayer, count, move)
             return res
 
         # AMI
@@ -125,7 +131,7 @@ class myPlayer(PlayerInterface):
             for move in self._board.legal_moves():
                 self._board.push(move)
                 alpha = max(alpha, self.alphabeta(
-                    alpha, beta, False, depth - 1, count))
+                    alpha, beta, False, depth - 1, count, move))
                 self._board.pop()
                 if alpha >= beta:
                     return beta
@@ -135,18 +141,20 @@ class myPlayer(PlayerInterface):
             for move in self._board.legal_moves():
                 self._board.push(move)
                 beta = min(beta, self.alphabeta(
-                    alpha, beta, True, depth - 1, count))
+                    alpha, beta, True, depth - 1, count, move))
                 self._board.pop()
                 if alpha >= beta:
                     return alpha
             return beta
 
-    def evaluate(self, moves, maximizePlayer, count):
+    def evaluate(self, moves, maximizePlayer, count, move):
 
         black_moves = []
         white_moves = []
+        last_move = move
         res = 0
 
+        # print("LAST MOVE ", self._board.flat_to_name(last_move))
         # La fonction d'évaluation doit etre symétrique
         if self._board.next_player() == self._board._WHITE:
             ami = -1
@@ -170,7 +178,7 @@ class myPlayer(PlayerInterface):
                 white_moves.append(move)
 
         if count <= 10: # Evaluation Fuseki pour les premiers coups
-            res = self.evaluate_opening(moves, black_moves, white_moves)
+            res = self.evaluate_opening(moves, black_moves, white_moves, last_move)
             return res
 
         # On évalue la position des pions NOIRS sur le plateau
@@ -218,7 +226,7 @@ class myPlayer(PlayerInterface):
         return res
 
     # Fuseki
-    def evaluate_opening(self, moves, black_moves, white_moves):
+    def evaluate_opening(self, moves, black_moves, white_moves, move):
 
         # On cherche à atteindre les coins et les bords
         # et à placer des coups sur la deuxième ligne
