@@ -79,7 +79,7 @@ class myPlayer(PlayerInterface):
         max = -100000000
         alpha = -100000000
         beta = +100000000
-        depth = 2
+        depth = 3
         best_move = 0
         first_black = self._board.name_to_coord('G7')
         flatt_first_black = self._board.flatten(first_black)
@@ -136,6 +136,7 @@ class myPlayer(PlayerInterface):
         for move in self._board.legal_moves():
             self._board.push(move)
             val = self.alphabeta(alpha, beta, False, depth-1, move)
+            print("VAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAL ", val)
             self._board.pop()
             if val > alpha:
                 alpha = val
