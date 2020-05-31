@@ -132,6 +132,7 @@ class myPlayer(PlayerInterface):
     def get_last_black(self):
         if (self._black_goban != []):
             return self._board.unflatten(self._black_goban[-1]) 
+
     def get_last_white(self):
         if (self._white_goban != []):
             return self._board.unflatten(self._white_goban[-1])
@@ -316,7 +317,7 @@ class myPlayer(PlayerInterface):
                 white_moves.append(move)
 
         if self._count <= 10: # Evaluation Fuseki pour les premiers coups
-            opening = Opening.Opening(self, black_moves, white_moves)
+            opening = Opening.Opening(self._board, black_moves, white_moves, self._black_goban, self._white_goban)
             res = opening.evaluate_opening()
             # res = self.evaluate_opening(moves, black_moves, white_moves, last_move)
             return res
