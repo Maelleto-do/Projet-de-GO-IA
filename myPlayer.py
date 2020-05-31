@@ -10,6 +10,7 @@ import timeit
 import Goban
 from random import choice
 from playerInterface import *
+import Territory
 
 
 class myPlayer(PlayerInterface):
@@ -30,24 +31,103 @@ class myPlayer(PlayerInterface):
     def getPlayerName(self):
         return "Random Player"
 
-    def in_N(self, x, y):
-        return (3 <= x <= 5) and (6 <= y <=8)
-    def in_E(self, x, y):
-        return (6 <= x <= 8) and (3 <= y <= 5)
-    def in_O(self, x, y):
-        return (0 <= x <= 2) and (3 <= y <= 5)
-    def in_S(self, x, y):
-        return (3 <= x <= 5) and (0 <= y <= 2)
+    # def in_N(self, x, y):
+    #     return (3 <= x <= 5) and (6 <= y <=8)
+    # def in_E(self, x, y):
+    #     return (6 <= x <= 8) and (3 <= y <= 5)
+    # def in_O(self, x, y):
+    #     return (0 <= x <= 2) and (3 <= y <= 5)
+    # def in_S(self, x, y):
+    #     return (3 <= x <= 5) and (0 <= y <= 2)
 
-    def in_NE(self, x, y):
-        return (6 <= x <=8) and (6 <= y <=8)
-    def in_NO(self, x, y):
-        return (0 <= x <= 2) and (6 <= y <= 8)
-    def in_SO(self, x, y):
-        return (0 <= x <= 2) and (0 <= y <= 2)
-    def in_SE(self, x, y):
-        return (6 <= x <= 8) and (0 <= y <= 2)
+    # def in_NE(self, x, y):
+    #     return (6 <= x <=8) and (6 <= y <=8)
+    # def in_NO(self, x, y):
+    #     return (0 <= x <= 2) and (6 <= y <= 8)
+    # def in_SO(self, x, y):
+    #     return (0 <= x <= 2) and (0 <= y <= 2)
+    # def in_SE(self, x, y):
+    #     return (6 <= x <= 8) and (0 <= y <= 2)
+
+    # # Return True si le territoire appartient à Noir, False sinon
+    # # Ainsi que le nombre de pièces dans chaque territoire
+    # def north_territory(self, x, y, black_moves, white_moves):
+    #     b = 0
+    #     w = 0
+    #     for move in black_moves:
+    #         ufcoord = Goban.Board.name_to_coord(move)
+    #         x = ufcoord[0]
+    #         y = ufcoord[1]
+    #         if self.in_N(x, y):
+    #             b = b + 1
+
+    #     for move in white_moves:
+    #         ufcoord = Goban.Board.name_to_coord(move)
+    #         x = ufcoord[0]
+    #         y = ufcoord[1]
+    #         if self.in_N(x, y):
+    #             w = w + 1
+    #     return b, w, b > w
     
+    # # Return True si le territoire appartient à Noir, False sinon
+    # def east_territory(self, x, y, black_moves, white_moves):
+    #     b = 0
+    #     w = 0
+    #     for move in black_moves:
+    #         ufcoord = Goban.Board.name_to_coord(move)
+    #         x = ufcoord[0]
+    #         y = ufcoord[1]
+    #         if self.in_E(x, y):
+    #             b = b + 1
+
+    #     for move in white_moves:
+    #         ufcoord = Goban.Board.name_to_coord(move)
+    #         x = ufcoord[0]
+    #         y = ufcoord[1]
+    #         if self.in_E(x, y):
+    #             w = w + 1
+    #     return b, w, b > w
+    
+    # # Return True si le territoire appartient à Noir, False sinon
+    # def south_territory(self, x, y, black_moves, white_moves):
+    #     b = 0
+    #     w = 0
+    #     for move in black_moves:
+    #         ufcoord = Goban.Board.name_to_coord(move)
+    #         x = ufcoord[0]
+    #         y = ufcoord[1]
+    #         if self.in_S(x, y):
+    #             b = b + 1
+
+    #     for move in white_moves:
+    #         ufcoord = Goban.Board.name_to_coord(move)
+    #         x = ufcoord[0]
+    #         y = ufcoord[1]
+    #         if self.in_S(x, y):
+    #             w = w + 1
+    #     return b, w, b > w
+    
+    # # Return True si le territoire appartient à Noir, False sinon
+    # def west_territory(self, x, y, black_moves, white_moves):
+    #     b = 0
+    #     w = 0
+    #     for move in black_moves:
+    #         ufcoord = Goban.Board.name_to_coord(move)
+    #         x = ufcoord[0]
+    #         y = ufcoord[1]
+    #         if self.in_O(x, y):
+    #             b = b + 1
+
+    #     for move in white_moves:
+    #         ufcoord = Goban.Board.name_to_coord(move)
+    #         x = ufcoord[0]
+    #         y = ufcoord[1]
+    #         if self.in_O(x, y):
+    #             w = w + 1
+    #     return b, w, b > w
+    
+
+        
     def get_last_black(self):
         if (self._black_goban != []):
             return self._board.unflatten(self._black_goban[-1]) 
@@ -235,7 +315,7 @@ class myPlayer(PlayerInterface):
             if self._board[Goban.Board.flatten((x, y))] == self._board._WHITE:
                 white_moves.append(move)
 
-        if self._count <= 20: # Evaluation Fuseki pour les premiers coups
+        if self._count <= 10: # Evaluation Fuseki pour les premiers coups
             res = self.evaluate_opening(moves, black_moves, white_moves, last_move)
             return res
 
@@ -325,6 +405,7 @@ class myPlayer(PlayerInterface):
         potential_black = max(potential_black, abs(y_max_b - y_min_b))
         distance_white = abs(x_max_w - x_min_w)
         potential_white = max(potential_white, abs(y_max_w - y_min_w))
+        territory = Territory.Territory(self._board, black_moves, white_moves)
 
 
         if self._board.next_player() == self._board._BLACK:
@@ -344,19 +425,24 @@ class myPlayer(PlayerInterface):
                     res = res + ami*1000
                 if ( ((1 <= x <= 2) or (6 <= x <= 7)) and ((1 <= y <= 2) or (6 <= y <= 7))): # dans un coin
                     res = res + ami*1000
-                if ( self.in_N(x, y) or self.in_S(x, y) or self.in_NE(x, y) or self.in_SE(x, y) ):
+                if ( territory.in_N(x, y) or territory.in_S(x, y) or territory.in_NE(x, y) or territory.in_SE(x, y) ):
                     res = res + ami*1000
-                
-                if y > y_max_b:
-                    y_max_b = y
-                if y < y_min_b:
-                    y_min_b = y
-                if x > x_max_b:
-                    x_max_b = x
-                if x < x_min_b:
-                    x_min_b = x
-            if (potential_black >= abs(y_max_w - y_min_w)):
-                res = res + ami*1000 
+
+                if ( (territory.north_territory(x, y)[0] == 1) 
+                or (territory.south_territory(x, y)[0] == 1) 
+                or (territory.east_territory(x, y)[0] == 1)
+                or (territory.west_territory(x, y)[0] == 1) ):
+                    res = res + ami*2000
+                # if y > y_max_b:
+                #     y_max_b = y
+                # if y < y_min_b:
+                #     y_min_b = y
+                # if x > x_max_b:
+                #     x_max_b = x
+                # if x < x_min_b:
+                #     x_min_b = x
+            # if (potential_black >= abs(y_max_w - y_min_w)):
+            #     res = res + ami*1000 
         else:
             for move in white_moves:
                 ufcoord = Goban.Board.name_to_coord(move)
@@ -366,18 +452,18 @@ class myPlayer(PlayerInterface):
                     res = res + ennemi*1000
                 if ( ((1 <= x <= 2) or (6 <= x <= 7)) and ((1 <= y <= 2) or (6 <= y <= 7))): # dans un coin
                     res = res + ennemi*1000
-                if ( self.in_N(x, y) or self.in_S(x, y) or self.in_NE(x, y) or self.in_SE(x, y) ):
+                if ( territory.in_N(x, y) or territory.in_S(x, y) or territory.in_NE(x, y) or territory.in_SE(x, y) ):
                     res = res + ennemi*1000
-                if y > y_max_w:
-                    y_max_w = y
-                if y < y_min_w:
-                    y_min_w = y
-                if x > x_max_w:
-                    x_max_w = x
-                if x < x_min_w:
-                    x_min_w = x
-                if (potential_white >= abs(y_max_b - y_min_b)):
-                    res = res + ennemi*1000
+                # if y > y_max_w:
+                #     y_max_w = y
+                # if y < y_min_w:
+                #     y_min_w = y
+                # if x > x_max_w:
+                #     x_max_w = x
+                # if x < x_min_w:
+                #     x_min_w = x
+                # if (potential_white >= abs(y_max_b - y_min_b)):
+                #     res = res + ennemi*1000
 
         return res
 
