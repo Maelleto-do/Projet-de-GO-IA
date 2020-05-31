@@ -79,8 +79,9 @@ class myPlayer(PlayerInterface):
         max = -100000000
         alpha = -100000000
         beta = +100000000
-        depth = 3
+        depth = 4
         best_move = 0
+        start = 0
         first_black = self._board.name_to_coord('G7')
         flatt_first_black = self._board.flatten(first_black)
 
@@ -135,8 +136,8 @@ class myPlayer(PlayerInterface):
 
         for move in self._board.legal_moves():
             self._board.push(move)
-            val = self.alphabeta(alpha, beta, False, depth-1, move)
-            print("VAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAL ", val)
+            start = timeit.default_timer()
+            val = self.alphabeta(alpha, beta, False, depth-1, move, start)
             self._board.pop()
             if val > alpha:
                 alpha = val
@@ -149,7 +150,8 @@ class myPlayer(PlayerInterface):
         else: self._white_goban.append(best_move)
         return Goban.Board.flat_to_name(best_move)
 
-    def alphabeta(self, alpha, beta, maximizePlayer, depth, move):
+    def alphabeta(self, alpha, beta, maximizePlayer, depth, move, start):
+
         moves = ['A1', 'B1', 'C1', 'D1', 'E1', 'F1', 'G1', 'H1', 'J1', 'A2', 'B2',
                  'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'J2', 'A3', 'B3', 'C3', 'D3',
                  'E3', 'F3', 'G3', 'H3', 'J3', 'A4', 'B4', 'C4', 'D4', 'E4', 'F4',
@@ -170,28 +172,33 @@ class myPlayer(PlayerInterface):
 
         if depth == 0:
             res = self.evaluate(moves, maximizePlayer, move)
+            # print("REEEEEEEEEEES ", res)
             return res
 
         # AMI
-        if maximizePlayer:
+        if maximizePlayer == True:
             for move in self._board.legal_moves():
+                end = timeit.default_timer()
                 self._board.push(move)
                 alpha = max(alpha, self.alphabeta(
-                    alpha, beta, False, depth - 1, move))
+                    alpha, beta, False, depth - 1, move, start))
                 self._board.pop()
                 if alpha >= beta:
                     return beta
-            return alpha
+                return alpha
+
         # ENNEMI
-        else:
+        elif maximizePlayer == False:
             for move in self._board.legal_moves():
+                end = timeit.default_timer()
                 self._board.push(move)
                 beta = min(beta, self.alphabeta(
-                    alpha, beta, True, depth - 1, move))
+                    alpha, beta, True, depth - 1, move, start))
                 self._board.pop()
                 if alpha >= beta:
                     return alpha
-            return beta
+                return beta
+
 
     def evaluate(self, moves, maximizePlayer, move):
 
@@ -279,6 +286,7 @@ class myPlayer(PlayerInterface):
     # Fuseki
     def evaluate_opening(self, moves, black_moves, white_moves, move):
 
+
         # On cherche à atteindre les coins et les bords
         # et à placer des coups sur la deuxième ligne
 
@@ -300,60 +308,17 @@ class myPlayer(PlayerInterface):
         x_last = 0
         y_last = 0
         res = 0
+        res_black = 0
+        res_white = 0
 
-        if self._board.next_player() == self._board._WHITE:
-            ami = -1
+        if self._board.next_player() == self._board._BLACK:
+            ami = 1
             ennemi = 1
         else:
             ami = 1
-            ennemi = -1
+            ennemi = 1
 
         b = 0
-        for move in black_moves:
-            ufcoord = Goban.Board.name_to_coord(move)
-            x = ufcoord[0]
-            y = ufcoord[1]
-            if self._black_goban != []:
-                ufcoord_last = self.get_last_black()
-                x_last = ufcoord_last[0]
-                y_last = ufcoord_last[1]
-                if ( abs(y_last - y) > 4):
-                    res = res + ami*500
-                if self._is_tobi(x, y, ufcoord_last):
-                    print("ICIIIIIIIIIIII")
-                    res = res + ami*1000
-            if (1 <= x <= 7) and (1 <= y <= 7): # se situe sur le deuxième ligne
-                res = res + ami*500
-            if ( ((1 <= x <= 2) or (6 <= x <= 7)) and ((1 <= y <= 2) or (6 <= y <= 7))): # dans un coin
-                res = res + ami*500
-            if ( self.in_N(x, y) or self.in_S(x, y) or self.in_NE(x, y) or self.in_SE(x, y) ):
-                res = res + ami*500
-            
-            if y > y_max_b:
-                y_max_b = y
-            if y < y_min_b:
-                y_min_b = y
-            if x > x_max_b:
-                x_max_b = x
-            if x < x_min_b:
-                x_min_b = x
-
-        for move in white_moves:
-            ufcoord = Goban.Board.name_to_coord(move)
-            x = ufcoord[0]
-            y = ufcoord[1]
-            if (1 <= x <= 7) and (1 <= y <= 7): # se situe sur le deuxième ligne
-                res = res + ennemi*1000
-            if ( ((1 <= x <= 2) or (6 <= x <= 7)) and ((1 <= y <= 2) or (6 <= y <= 7))): # dans un coin
-                res = res + ennemi*700
-            if y > y_max_w:
-                y_max_w = y
-            if y < y_min_w:
-                y_min_w = y
-            if x > x_max_w:
-                x_max_w = x
-            if x < x_min_w:
-                x_min_w = x
 
 
         distance_black = abs(x_max_b - x_min_b)
@@ -363,12 +328,56 @@ class myPlayer(PlayerInterface):
 
 
         if self._board.next_player() == self._board._BLACK:
-            if (potential_black >= abs(y_max_w - y_min_w)):
-                res = res + ami*1000
+            for move in black_moves:
+                ufcoord = Goban.Board.name_to_coord(move)
+                x = ufcoord[0]
+                y = ufcoord[1]
+                if self._black_goban != []:
+                    ufcoord_last = self.get_last_black()
+                    x_last = ufcoord_last[0]
+                    y_last = ufcoord_last[1]
+                    if ( abs(y_last - y) > 4):
+                        res = res + ami*1000
+                    if self._is_tobi(x, y, ufcoord_last):
+                        res = res + ami*1000
+                if (1 <= x <= 7) and (1 <= y <= 7): # se situe sur le deuxième ligne
+                    res = res + ami*1000
+                if ( ((1 <= x <= 2) or (6 <= x <= 7)) and ((1 <= y <= 2) or (6 <= y <= 7))): # dans un coin
+                    res = res + ami*1000
+                if ( self.in_N(x, y) or self.in_S(x, y) or self.in_NE(x, y) or self.in_SE(x, y) ):
+                    res = res + ami*1000
                 
+                if y > y_max_b:
+                    y_max_b = y
+                if y < y_min_b:
+                    y_min_b = y
+                if x > x_max_b:
+                    x_max_b = x
+                if x < x_min_b:
+                    x_min_b = x
+            if (potential_black >= abs(y_max_w - y_min_w)):
+                res = res + ami*1000 
         else:
-            if (potential_white >= abs(y_max_b - y_min_b)):
-                res = res + ennemi*1000
+            for move in white_moves:
+                ufcoord = Goban.Board.name_to_coord(move)
+                x = ufcoord[0]
+                y = ufcoord[1]
+                if (1 <= x <= 7) and (1 <= y <= 7): # se situe sur le deuxième ligne
+                    res = res + ennemi*1000
+                if ( ((1 <= x <= 2) or (6 <= x <= 7)) and ((1 <= y <= 2) or (6 <= y <= 7))): # dans un coin
+                    res = res + ennemi*1000
+                if ( self.in_N(x, y) or self.in_S(x, y) or self.in_NE(x, y) or self.in_SE(x, y) ):
+                    res = res + ennemi*1000
+                if y > y_max_w:
+                    y_max_w = y
+                if y < y_min_w:
+                    y_min_w = y
+                if x > x_max_w:
+                    x_max_w = x
+                if x < x_min_w:
+                    x_min_w = x
+                if (potential_white >= abs(y_max_b - y_min_b)):
+                    res = res + ennemi*1000
 
         return res
 
