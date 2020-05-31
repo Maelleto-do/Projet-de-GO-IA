@@ -138,23 +138,6 @@ class myPlayer(PlayerInterface):
             return self._board.unflatten(self._white_goban[-1])
 
 
-    def _is_nobi(self, x, y, last_move):
-        res = False
-        if( (x == last_move[0] + 1) or ( x == last_move[0] - 1) ):
-            if ( y == last_move[1] ):
-                res = True
-        elif ( (y == last_move[1] + 1) or ( y == last_move[y] - 1) ):
-            if ( x == last_move[1] ):
-                res = True
-        return res
-
-    def _is_tobi(self, x, y, last_move):
-        res = False
-        if( (x == last_move[0] + 2) or ( x == last_move[0] - 2) ) and ( y == last_move[1] ):
-                res = True
-        elif ( (y == last_move[1] + 2) or ( y == last_move[1] - 2) ) and ( x == last_move[1] ):
-                res = True
-        return res
 
     def getPlayerMove(self):
 
@@ -250,7 +233,7 @@ class myPlayer(PlayerInterface):
             if res == "0-1":
                 return 500
             else:
-                return self.evaluate(moves, maximizePlayer, move)
+                return 0
 
         if depth == 0:
             res = self.evaluate(moves, maximizePlayer, move)
@@ -290,18 +273,20 @@ class myPlayer(PlayerInterface):
         res = 0
 
         # if self._board.next_player() == self._board._BLACK:
-        #     print("BLAAAAAAAAAAAACK MOVES", self._black_goban)
+        #     next_player = "BLACK"
+        # else:
+        #     next_player = "WHITE"
 
 
         # print("LAST MOVE ", self._board.flat_to_name(last_move))
         # La fonction d'évaluation doit etre symétrique
-        if self._board.next_player() == self._board._WHITE:
-            ami = -1
-            ennemi = 1
-        else:
-            ami = 1
-            ennemi = -1
+        # if maximizePlayer:
 
+        # else:
+        #     ami = -1
+        #     ennemi = 1
+        ami = 1
+        ennemi = -1
         # On remplit les tableau de noirs et de blancs présents sur le plateau
         for move in moves:
             ufcoord = Goban.Board.name_to_coord(move)
@@ -316,11 +301,10 @@ class myPlayer(PlayerInterface):
             if self._board[Goban.Board.flatten((x, y))] == self._board._WHITE:
                 white_moves.append(move)
 
-        if self._count <= 10: # Evaluation Fuseki pour les premiers coups
-            opening = Opening.Opening(self._board, black_moves, white_moves, self._black_goban, self._white_goban)
-            res = opening.evaluate_opening()
-            # res = self.evaluate_opening(moves, black_moves, white_moves, last_move)
-            return res
+        # if self._count <= 10: # Evaluation Fuseki pour les premiers coups
+        #     opening = Opening.Opening(self._board, black_moves, white_moves, self._black_goban, self._white_goban)
+        #     res = opening.evaluate_opening(maximizePlayer)
+        #     return res
 
         # On évalue la position des pions NOIRS sur le plateau
         for move in black_moves:
