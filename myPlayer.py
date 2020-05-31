@@ -301,10 +301,10 @@ class myPlayer(PlayerInterface):
             if self._board[Goban.Board.flatten((x, y))] == self._board._WHITE:
                 white_moves.append(move)
 
-        # if self._count <= 10: # Evaluation Fuseki pour les premiers coups
-        #     opening = Opening.Opening(self._board, black_moves, white_moves, self._black_goban, self._white_goban)
-        #     res = opening.evaluate_opening(maximizePlayer)
-        #     return res
+        if self._count <= 10: # Evaluation Fuseki pour les premiers coups
+            opening = Opening.Opening(self._board, black_moves, white_moves, self._black_goban, self._white_goban)
+            res = opening.evaluate_opening()
+            return res
 
         # On évalue la position des pions NOIRS sur le plateau
         for move in black_moves:
