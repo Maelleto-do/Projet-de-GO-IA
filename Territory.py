@@ -70,6 +70,46 @@ class Territory:
 # Return True si le territoire appartient à Noir, False sinon
 # Ainsi que le nombre de pièces dans chaque territoire
 
+    def count_territories_black(self):
+        count = 0
+        if self.north_territory()[2]: count = count + 1 
+        if self.south_territory()[2]: count = count + 1 
+        if self.east_territory()[2]: count = count + 1 
+        if self.west_territory()[2]: count = count + 1 
+        if self.north_east_territory()[2]: count = count + 1 
+        if self.north_west_territory()[2]: count = count + 1 
+        if self.south_east_territory()[2]: count = count + 1 
+        if self.south_west_territory()[2]: count = count + 1 
+        # count = self.north_territory()[0] 
+        # + self.south_territory()[0]  
+        # + self.east_territory()[0]
+        # + self.west_territory()[0]
+        # + self.north_east_territory()[0]
+        # + self.north_west_territory()[0]
+        # + self.south_east_territory()[0]
+        # + self.south_west_territory()[0]
+        return count
+
+    def count_territories_white(self):
+        count = 0
+        if not self.north_territory()[2]: count = count + 1 
+        if not self.south_territory()[2]: count = count + 1 
+        if not self.east_territory()[2]: count = count + 1 
+        if not self.west_territory()[2]: count = count + 1 
+        if not self.north_east_territory()[2]: count = count + 1 
+        if not self.north_west_territory()[2]: count = count + 1 
+        if not self.south_east_territory()[2]: count = count + 1 
+        if not self.south_west_territory()[2]: count = count + 1 
+        # count = self.north_territory()[1] 
+        # + self.south_territory()[1]  
+        # + self.east_territory()[1]
+        # + self.west_territory()[1]
+        # + self.north_east_territory()[1]
+        # + self.north_west_territory()[1]
+        # + self.south_east_territory()[1]
+        # + self.south_west_territory()[1]
+        return count
+
 
     def north_territory(self):
         b = 0

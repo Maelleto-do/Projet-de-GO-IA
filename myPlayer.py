@@ -140,7 +140,7 @@ class myPlayer(PlayerInterface):
         max = -100000000
         alpha = -100000000
         beta = +100000000
-        depth = 9
+        depth = 7
         best_move = 0
         start = 0
         first_black = self._board.name_to_coord('G7')
@@ -316,7 +316,7 @@ class myPlayer(PlayerInterface):
         #             break
         #     return res
 
-        if self._count <= 5: # Evaluation Fuseki pour les premiers coups
+        if self._count <= 20: # Evaluation Fuseki pour les premiers coups
             opening = Opening.Opening(self._board, black_moves, white_moves, self._black_goban, self._white_goban)
             res = opening.evaluate_opening()
             return res

@@ -41,29 +41,30 @@ class Opening:
         # data_opening = json.load(json_file)
         # print(data_opening[0].moves)
         
+        res = territory.count_territories_black() - territory.count_territories_white()
+        print("REEEEEEEEEEEEEEEEEEEEEEEEEEEES ", res)
 
-
-        for move in self._black_moves:
-            ufcoord = Goban.Board.name_to_coord(move)
-            x = ufcoord[0]
-            y = ufcoord[1]
-            if self._black_goban != []:
-                ufcoord_last = self.get_last_black()
-                x_last = ufcoord_last[0]
-                y_last = ufcoord_last[1]
-                if (abs(y_last - y) > 4):
-                    res = res + 1000
-                if (shape._is_keima(x, y, ufcoord_last)) or (shape._is_tobi(x, y, ufcoord_last)) :
-                    res = res + 5000
-            if (1 <= x <= 7) and (1 <= y <= 7):  # se situe sur le deuxième ligne
-                res = res + 3000
-            if territory.in_N(x, y) or territory.in_NE(x, y) or territory.in_NO(x, y) or territory.in_SE(x, y):
-                res = res + 4000
-            if ((territory.north_east_territory()[0] == 1)
-                and ((territory.south_territory()[0] == 1)
-                    or (territory.east_territory()[0] == 1)
-                    or (territory.west_territory()[0] == 1))):
-                res = res + 2000
+        # for move in self._black_moves:
+        #     ufcoord = Goban.Board.name_to_coord(move)
+        #     x = ufcoord[0]
+        #     y = ufcoord[1]
+        #     if self._black_goban != []:
+        #         ufcoord_last = self.get_last_black()
+        #         x_last = ufcoord_last[0]
+        #         y_last = ufcoord_last[1]
+        #         if (abs(y_last - y) > 4):
+        #             res = res + 1000
+        #         if (shape._is_keima(x, y, ufcoord_last)) or (shape._is_tobi(x, y, ufcoord_last)) :
+        #             res = res + 7000
+        #     if (1 <= x <= 7) and (1 <= y <= 7):  # se situe sur le deuxième ligne
+        #         res = res + 3000
+        #     if territory.in_N(x, y) or territory.in_NE(x, y) or territory.in_NO(x, y) or territory.in_SE(x, y):
+        #         res = res + 6000
+        #     if ((territory.north_east_territory()[0] == 1)
+        #         and ((territory.south_territory()[0] == 1)
+        #             or (territory.east_territory()[0] == 1)
+        #             or (territory.west_territory()[0] == 1))):
+        #         res = res + 2000
 
         # for move in self._white_moves:
         #     ufcoord = Goban.Board.name_to_coord(move)
