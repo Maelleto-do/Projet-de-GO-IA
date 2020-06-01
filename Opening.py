@@ -81,10 +81,10 @@ class Opening:
             # se situe près d'un coin
             # if (territory.in_NE(x, y) or territory.in_SE(x, y) or territory.in_NO(x, y) or territory.in_SO(x, y)):
             #     res = res - 1000
-            # if ((territory.north_territory()[1] == 1)
-            #     or (territory.south_territory()[1] == 1)
-            #     or (territory.east_territory()[1] == 1)
-            #         or (territory.west_territory()[1] == 1)):
-            #     res = res - 2000
+            if ((territory.north_territory()[1] == 1)
+                or (territory.south_territory()[1] == 1)
+                or (territory.east_territory()[1] == 1)
+                    or (territory.west_territory()[1] == 1)):
+                res = res - 2000
 
         return res
