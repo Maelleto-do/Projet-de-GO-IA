@@ -12,6 +12,7 @@ from random import choice
 from playerInterface import *
 import Territory
 import Opening
+import json
 
 
 class myPlayer(PlayerInterface):
@@ -27,7 +28,6 @@ class myPlayer(PlayerInterface):
         self._black_goban = []
         self._white_goban = []
         self._count = 0
-        
 
     def getPlayerName(self):
         return "Random Player"
@@ -69,7 +69,7 @@ class myPlayer(PlayerInterface):
     #         if self.in_N(x, y):
     #             w = w + 1
     #     return b, w, b > w
-    
+
     # # Return True si le territoire appartient à Noir, False sinon
     # def east_territory(self, x, y, black_moves, white_moves):
     #     b = 0
@@ -88,7 +88,7 @@ class myPlayer(PlayerInterface):
     #         if self.in_E(x, y):
     #             w = w + 1
     #     return b, w, b > w
-    
+
     # # Return True si le territoire appartient à Noir, False sinon
     # def south_territory(self, x, y, black_moves, white_moves):
     #     b = 0
@@ -107,7 +107,7 @@ class myPlayer(PlayerInterface):
     #         if self.in_S(x, y):
     #             w = w + 1
     #     return b, w, b > w
-    
+
     # # Return True si le territoire appartient à Noir, False sinon
     # def west_territory(self, x, y, black_moves, white_moves):
     #     b = 0
@@ -126,18 +126,14 @@ class myPlayer(PlayerInterface):
     #         if self.in_O(x, y):
     #             w = w + 1
     #     return b, w, b > w
-    
 
-        
     def get_last_black(self):
         if (self._black_goban != []):
-            return self._board.unflatten(self._black_goban[-1]) 
+            return self._board.unflatten(self._black_goban[-1])
 
     def get_last_white(self):
         if (self._white_goban != []):
             return self._board.unflatten(self._white_goban[-1])
-
-
 
     def getPlayerMove(self):
 
@@ -188,6 +184,8 @@ class myPlayer(PlayerInterface):
         #     self._board.push(flatt_second_white)
         #     return self._board.flat_to_name(flatt_second_white)
 
+
+
         if self._board.is_game_over():
             print("Referee told me to play but the game is over!")
             res = self._board.result()
@@ -201,18 +199,22 @@ class myPlayer(PlayerInterface):
 
         for move in self._board.legal_moves():
             self._board.push(move)
-            start = timeit.default_timer()
             val = self.alphabeta(alpha, beta, False, depth-1, move, start)
             self._board.pop()
             if val > alpha:
                 alpha = val
                 best_move = move
+
         self._board.push(best_move)
         self._count = self._count + 1
 
+
+
+
         if self._board.next_player() == self._board._WHITE:
             self._black_goban.append(best_move)
-        else: self._white_goban.append(best_move)
+        else:
+            self._white_goban.append(best_move)
         return Goban.Board.flat_to_name(best_move)
 
     def alphabeta(self, alpha, beta, maximizePlayer, depth, move, start):
@@ -264,7 +266,6 @@ class myPlayer(PlayerInterface):
                     return alpha
                 return beta
 
-
     def evaluate(self, moves, maximizePlayer, move):
 
         black_moves = []
@@ -276,7 +277,6 @@ class myPlayer(PlayerInterface):
         #     next_player = "BLACK"
         # else:
         #     next_player = "WHITE"
-
 
         # print("LAST MOVE ", self._board.flat_to_name(last_move))
         # La fonction d'évaluation doit etre symétrique
@@ -300,6 +300,21 @@ class myPlayer(PlayerInterface):
             y = ufcoord[1]
             if self._board[Goban.Board.flatten((x, y))] == self._board._WHITE:
                 white_moves.append(move)
+
+
+        # with open("games.json", 'r') as json_data:
+        #     data_opening = json.load(json_data)
+        #     print(data_opening[0]['moves'])
+
+        # last_black_move = self._black_goban[-1]
+        # for i in range(0, 509):
+        #     for w_move in white_moves:
+        #         if (data_opening[i]['moves'][0 + 2*k] == last_black_move) and (data_opening[i]['moves'][0 + 3*k] == w_move):
+        #             res = res + 1000
+        #             k = k+1
+        #         else:
+        #             break
+        #     return res
 
         if self._count <= 5: # Evaluation Fuseki pour les premiers coups
             opening = Opening.Opening(self._board, black_moves, white_moves, self._black_goban, self._white_goban)
@@ -368,7 +383,6 @@ class myPlayer(PlayerInterface):
 
     #     territory = Territory.Territory(self._board, black_moves, white_moves)
 
-
     #     if self._board.next_player() == self._board._BLACK:
     #         for move in black_moves:
     #             ufcoord = Goban.Board.name_to_coord(move)
@@ -389,8 +403,8 @@ class myPlayer(PlayerInterface):
     #             if ( territory.in_N(x, y) or territory.in_S(x, y) or territory.in_NE(x, y) or territory.in_SE(x, y) ):
     #                 res = res + ami*1000
 
-    #             if ( (territory.north_territory(x, y)[0] == 1) 
-    #             or (territory.south_territory(x, y)[0] == 1) 
+    #             if ( (territory.north_territory(x, y)[0] == 1)
+    #             or (territory.south_territory(x, y)[0] == 1)
     #             or (territory.east_territory(x, y)[0] == 1)
     #             or (territory.west_territory(x, y)[0] == 1) ):
     #                 res = res + ami*2000
@@ -405,8 +419,8 @@ class myPlayer(PlayerInterface):
     #                 res = res + ennemi*1000
     #             if ( territory.in_N(x, y) or territory.in_S(x, y) or territory.in_NE(x, y) or territory.in_SE(x, y) ):
     #                 res = res + ennemi*1000
-    #             if ( (territory.north_territory(x, y)[1] == 1) 
-    #                 or (territory.south_territory(x, y)[1] == 1) 
+    #             if ( (territory.north_territory(x, y)[1] == 1)
+    #                 or (territory.south_territory(x, y)[1] == 1)
     #                 or (territory.east_territory(x, y)[1] == 1)
     #                 or (territory.west_territory(x, y)[1] == 1) ):
     #                 res = res + ennemi*2000
