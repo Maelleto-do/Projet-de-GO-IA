@@ -144,7 +144,7 @@ class myPlayer(PlayerInterface):
         max = -100000000
         alpha = -100000000
         beta = +100000000
-        depth = 4
+        depth = 9
         best_move = 0
         start = 0
         first_black = self._board.name_to_coord('G7')
@@ -301,7 +301,7 @@ class myPlayer(PlayerInterface):
             if self._board[Goban.Board.flatten((x, y))] == self._board._WHITE:
                 white_moves.append(move)
 
-        if self._count <= 10: # Evaluation Fuseki pour les premiers coups
+        if self._count <= 5: # Evaluation Fuseki pour les premiers coups
             opening = Opening.Opening(self._board, black_moves, white_moves, self._black_goban, self._white_goban)
             res = opening.evaluate_opening()
             return res
