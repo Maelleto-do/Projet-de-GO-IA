@@ -14,13 +14,18 @@ class MiddleGame:
         self._mycolor = mycolor
         self._count = count
 
-    def get_last_enemy(self):
-        # 0 black, 1 white
+    def get_last_enemy(self, color):
         if self._board._historyMoveNames != []:
             if self._board._nextPlayer == self._board._WHITE:
-                return Goban.Board.coord_to_name(Goban.Board.unflatten(self._black_goban[-1])), self._board._historyMoveNames[(self._count * 2) - 1]
+                if color == "BLACK":
+                    return Goban.Board.coord_to_name(Goban.Board.unflatten(self._black_goban[-1]))
+                else:
+                    return self._board._historyMoveNames[(self._count * 2) - 1]
             else:
-                return self._board._historyMoveNames[self._count * 2], Goban.Board.coord_to_name(Goban.Board.unflatten(self._white_goban[-1]))
+                if color == "BLACK":
+                    return self._board._historyMoveNames[self._count * 2]
+                else:
+                    return Goban.Board.coord_to_name(Goban.Board.unflatten(self._white_goban[-1]))
 
     def get_last_white(self):
         if self._count == 0:
@@ -35,8 +40,8 @@ class MiddleGame:
             return self._board._historyMoveNames[(self._count * 2)]
 
     def evaluation(self):
-        print("LAST BLACK ", self.get_last_enemy()[0])
-        print("LAST WHITE ", self.get_last_enemy()[1])
+        print("LAST BLACK ", self.get_last_enemy("BLACK"))
+        print("LAST WHITE ", self.get_last_enemy("WHITE"))
         territory = Territory.Territory(
             self._board, self._black_moves, self._white_moves, self._black_goban, self._white_goban)
         shape = Shape.Shape(self._board, self._black_moves,
