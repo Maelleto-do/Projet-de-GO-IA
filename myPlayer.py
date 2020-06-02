@@ -197,6 +197,13 @@ class myPlayer(PlayerInterface):
                 print("equal")
             return "PASS"
 
+        # with open("games.json", 'r') as json_data:
+        #     data_opening = json.load(json_data)
+
+        #     if self._mycolor == Goban.Board._BLACK:
+        #         data_opening[0]['moves'][0:1] == self._board
+
+
         for move in self._board.legal_moves():
             self._board.push(move)
             val = self.alphabeta(alpha, beta, False, depth-1, move, start)
@@ -205,16 +212,14 @@ class myPlayer(PlayerInterface):
                 alpha = val
                 best_move = move
 
-        self._board.push(best_move)
-        self._count = self._count + 1
-        
-        
-
         if self._mycolor == Goban.Board._BLACK:
             self._black_goban.append(best_move)
         else:
             self._white_goban.append(best_move)
-            
+
+        # print("HISTORIQUEEEEEEEEEEEEEEEEEEE ", self._board._historyMoveNames)
+        self._board.push(best_move)
+        self._count = self._count + 1
         return Goban.Board.flat_to_name(best_move)
 
     def alphabeta(self, alpha, beta, maximizePlayer, depth, move, start):
@@ -301,10 +306,6 @@ class myPlayer(PlayerInterface):
             if self._board[Goban.Board.flatten((x, y))] == self._board._WHITE:
                 white_moves.append(move)
 
-        # with open("games.json", 'r') as json_data:
-        #     data_opening = json.load(json_data)
-        #     print(data_opening[0]['moves'])
-
         # last_black_move = self._black_goban[-1]
         # for i in range(0, 509):
         #     for w_move in white_moves:
@@ -315,7 +316,7 @@ class myPlayer(PlayerInterface):
         #             break
         #     return res
 
-        if self._count < 10:  # Evaluation Fuseki pour les premiers coups
+        if self._count < 3:  # Evaluation Fuseki pour les premiers coups
             opening = Opening.Opening(
                 self._board, self._mycolor, black_moves, white_moves, self._black_goban, self._white_goban)
             res = opening.evaluate_opening()

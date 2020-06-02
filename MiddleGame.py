@@ -36,26 +36,44 @@ class MiddleGame:
                         if shape._is_tobi(x, y, (x_white, y_white)):
                             black = black + 1000
 
-        for move in self._black_moves:
-            ufcoord = Goban.Board.name_to_coord(move)
-            x = ufcoord[0]
-            y = ufcoord[1]
-            # print("last black goban ", [Goban.Board.coord_to_name(self._board.unflatten(c)) for c in self._black_goban] )
-            # print("last white goban ", [Goban.Board.coord_to_name(self._board.unflatten(c)) for c in self._white_goban] )
-            if (self._white_goban != []):
-                last_white = self._board.unflatten(self._white_goban[-1])
-                if territory.distance(last_white, (x, y)) <= 2:
-                    print("Distance entre ", Goban.Board.coord_to_name(last_white), " et ", Goban.Board.coord_to_name(
-                        (x, y)), " : ", territory.distance(last_white, (x, y)))
-                    for move in self._white_moves:
-                        ufcoord = Goban.Board.name_to_coord(move)
-                        x_white = ufcoord[0]
-                        y_white = ufcoord[1]
-                        # print(" last white : ",  Goban.Board.coord_to_name(last_white))
-                        # print(" last black : ",  Goban.Board.coord_to_name(last_black))
-                        if territory.in_SE(last_white[0], last_white[1]) and territory.in_S(x_white, y_white):
-                            if shape._is_tobi(x_white, y_white, last_white):
-                                white = white + 6000
+        # for move in self._black_moves:
+        #     ufcoord = Goban.Board.name_to_coord(move)
+        #     x = ufcoord[0]
+        #     y = ufcoord[1]
+        #     # print("last black goban ", [Goban.Board.coord_to_name(self._board.unflatten(c)) for c in self._black_goban] )
+        #     # print("last white goban ", [Goban.Board.coord_to_name(self._board.unflatten(c)) for c in self._white_goban] )
+        #     if (self._white_goban != []):
+        #         last_white = self._board.unflatten(self._white_goban[-1])
+        #         if territory.distance(last_white, (x, y)) <= 2:
+        #             print("Distance entre ", Goban.Board.coord_to_name(last_white), " et ", Goban.Board.coord_to_name(
+        #                 (x, y)), " : ", territory.distance(last_white, (x, y)))
+        #             for move in self._white_moves:
+        #                 ufcoord = Goban.Board.name_to_coord(move)
+        #                 x_white = ufcoord[0]
+        #                 y_white = ufcoord[1]
+        #                 # print(" last white : ",  Goban.Board.coord_to_name(last_white))
+        #                 # print(" last black : ",  Goban.Board.coord_to_name(last_black))
+        #                 if territory.in_SE(last_white[0], last_white[1]) and territory.in_S(x_white, y_white):
+        #                     if shape._is_tobi(x_white, y_white, last_white):
+        #                         white = white + 6000
+
+        if (self._count > 2):
+            last_white = self._board.unflatten(self._white_goban[-1])
+            last_black = self._board._historyMoveNames[-1]
+            if territory.distance(last_white, last_black) <= 2:
+                print("Distance entre ", Goban.Board.coord_to_name(last_white), " et ", Goban.Board.coord_to_name(
+                    last_black), " : ", territory.distance(last_white, last_black))
+                for move in self._white_moves:
+                    ufcoord = Goban.Board.name_to_coord(move)
+                    x_white = ufcoord[0]
+                    y_white = ufcoord[1]
+                    if shape._is_tobi(x_white, y_white, last_white):
+                        white = white + 6000
+                    # print(" last white : ",  Goban.Board.coord_to_name(last_white))
+                    # print(" last black : ",  Goban.Board.coord_to_name(last_black))
+                    # if territory.in_SE(last_white[0], last_white[1]) and territory.in_S(x_white, y_white):
+                    #     if shape._is_tobi(x_white, y_white, last_white):
+                    #         white = white + 6000
 
             # for move in self._black_moves:
             #     ufcoord = Goban.Board.name_to_coord(move)
