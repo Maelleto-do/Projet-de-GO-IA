@@ -5,13 +5,14 @@ import Shape
 
 class MiddleGame:
 
-    def __init__(self, board, mycolor, black_moves, white_moves, black_goban, white_goban):
+    def __init__(self, board, mycolor, count, black_moves, white_moves, black_goban, white_goban):
         self._board = board
         self._black_goban = black_goban
         self._white_goban = white_goban
         self._black_moves = black_moves
         self._white_moves = white_moves
         self._mycolor = mycolor
+        self._count = count
 
     def evaluation(self):
 
@@ -57,11 +58,11 @@ class MiddleGame:
         #                     if shape._is_tobi(x_white, y_white, last_white):
         #                         white = white + 6000
 
-        if (self._count > 2):
+        if (self._count > 2 and self._white_goban != []):
             last_white = self._board.unflatten(self._white_goban[-1])
-            last_black = self._board._historyMoveNames[-1]
+            last_black = self._board.name_to_coord(self._board._historyMoveNames[-1])
             if territory.distance(last_white, last_black) <= 2:
-                print("Distance entre ", Goban.Board.coord_to_name(last_white), " et ", Goban.Board.coord_to_name(
+                print("DISTAAAAAAAAAAAAAAAAAAAAAANC entre ", Goban.Board.coord_to_name(last_white), " et ", Goban.Board.coord_to_name(
                     last_black), " : ", territory.distance(last_white, last_black))
                 for move in self._white_moves:
                     ufcoord = Goban.Board.name_to_coord(move)
