@@ -2,6 +2,7 @@
 
 
 import Goban
+import numpy as np
 
 
 class Territory:
@@ -12,6 +13,10 @@ class Territory:
         self._white_moves = white_moves
         self._black_moves = black_moves
         self._white_moves = white_moves
+
+    def dist(self, A, B):
+        res = np.sqrt( (A[0] - B[0])*(A[0] - B[0]) - (A[1] - B[1])(A[1] - B[1]) )
+        return res
 
     def in_N(self, x, y):
         return (3 <= x <= 5) and (6 <= y <= 8)
@@ -41,7 +46,7 @@ class Territory:
     def adversary_attack_black(self, territory):
         res = False
         if territory == "N":
-            if not self.north_territory[2]:
+            if self.north_territory[2]:
                 res = True
         if territory == "S":
              if not self.south_territory[2]:
@@ -80,14 +85,6 @@ class Territory:
         if self.north_west_territory()[2]: count = count + 1 
         if self.south_east_territory()[2]: count = count + 1 
         if self.south_west_territory()[2]: count = count + 1 
-        # count = self.north_territory()[0] 
-        # + self.south_territory()[0]  
-        # + self.east_territory()[0]
-        # + self.west_territory()[0]
-        # + self.north_east_territory()[0]
-        # + self.north_west_territory()[0]
-        # + self.south_east_territory()[0]
-        # + self.south_west_territory()[0]
         return count
 
     def count_territories_white(self):
@@ -100,14 +97,6 @@ class Territory:
         if not self.north_west_territory()[2]: count = count + 1 
         if not self.south_east_territory()[2]: count = count + 1 
         if not self.south_west_territory()[2]: count = count + 1 
-        # count = self.north_territory()[1] 
-        # + self.south_territory()[1]  
-        # + self.east_territory()[1]
-        # + self.west_territory()[1]
-        # + self.north_east_territory()[1]
-        # + self.north_west_territory()[1]
-        # + self.south_east_territory()[1]
-        # + self.south_west_territory()[1]
         return count
 
 

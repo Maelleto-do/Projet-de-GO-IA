@@ -13,6 +13,8 @@ from playerInterface import *
 import Territory
 import Opening
 import json
+import Shape
+import MiddleGame
 
 
 class myPlayer(PlayerInterface):
@@ -184,8 +186,6 @@ class myPlayer(PlayerInterface):
         #     self._board.push(flatt_second_white)
         #     return self._board.flat_to_name(flatt_second_white)
 
-
-
         if self._board.is_game_over():
             print("Referee told me to play but the game is over!")
             res = self._board.result()
@@ -207,9 +207,6 @@ class myPlayer(PlayerInterface):
 
         self._board.push(best_move)
         self._count = self._count + 1
-
-
-
 
         if self._board.next_player() == self._board._WHITE:
             self._black_goban.append(best_move)
@@ -301,7 +298,6 @@ class myPlayer(PlayerInterface):
             if self._board[Goban.Board.flatten((x, y))] == self._board._WHITE:
                 white_moves.append(move)
 
-
         # with open("games.json", 'r') as json_data:
         #     data_opening = json.load(json_data)
         #     print(data_opening[0]['moves'])
@@ -316,52 +312,57 @@ class myPlayer(PlayerInterface):
         #             break
         #     return res
 
-        if self._count <= 6: # Evaluation Fuseki pour les premiers coups
-            opening = Opening.Opening(self._board, self._mycolor, black_moves, white_moves, self._black_goban, self._white_goban)
+        if self._count < 2:  # Evaluation Fuseki pour les premiers coups
+            opening = Opening.Opening(
+                self._board, self._mycolor, black_moves, white_moves, self._black_goban, self._white_goban)
             res = opening.evaluate_opening()
             return res
+        else:
+            middle = MiddleGame.MiddleGame(
+                self._board, self._mycolor, black_moves, white_moves, self._black_goban, self._white_goban)
+            res = middle.evaluation()
+            return res
+        # # On évalue la position des pions NOIRS sur le plateau
+        # for move in black_moves:
+        #     ufcoord = Goban.Board.name_to_coord(move)
+        #     x = ufcoord[0]
+        #     y = ufcoord[1]
 
-        # On évalue la position des pions NOIRS sur le plateau
-        for move in black_moves:
-            ufcoord = Goban.Board.name_to_coord(move)
-            x = ufcoord[0]
-            y = ufcoord[1]
+        #     # Les pions ne doivent pas être eparpillés sur le plateau
+        #     # On favorise deux pions côte à côte
+        #     neighbors_coord = ((x+1, y), (x-1, y), (x, y+1), (x, y-1))
+        #     neighbors = [
+        #         c for c in neighbors_coord if self._board._isOnBoard(c[0], c[1])]
+        #     for n in neighbors:
+        #         if self._board[Goban.Board.flatten((n[0], n[1]))] == self._board._BLACK:
+        #             res = res + ami*400
 
-            # Les pions ne doivent pas être eparpillés sur le plateau
-            # On favorise deux pions côte à côte
-            neighbors_coord = ((x+1, y), (x-1, y), (x, y+1), (x, y-1))
-            neighbors = [
-                c for c in neighbors_coord if self._board._isOnBoard(c[0], c[1])]
-            for n in neighbors:
-                if self._board[Goban.Board.flatten((n[0], n[1]))] == self._board._BLACK:
-                    res = res + ami*400
+        #     # Les pions alignés doivent former une diagonale
+        #     diag_coord = (x+1, y+1)
+        #     if self._board._isOnBoard(diag_coord[0], diag_coord[1]):
+        #         if self._board[Goban.Board.flatten((diag_coord[0], diag_coord[1]))] == self._board._BLACK:
+        #             res = res + ami*100
 
-            # Les pions alignés doivent former une diagonale
-            diag_coord = (x+1, y+1)
-            if self._board._isOnBoard(diag_coord[0], diag_coord[1]):
-                if self._board[Goban.Board.flatten((diag_coord[0], diag_coord[1]))] == self._board._BLACK:
-                    res = res + ami*100
+        # # On évalue la position des pions BLANCS sur le plateau
+        # for move in white_moves:
+        #     ufcoord = Goban.Board.name_to_coord(move)
+        #     x = ufcoord[0]
+        #     y = ufcoord[1]
 
-        # On évalue la position des pions BLANCS sur le plateau
-        for move in white_moves:
-            ufcoord = Goban.Board.name_to_coord(move)
-            x = ufcoord[0]
-            y = ufcoord[1]
+        #     # Les pions ne doivent pas être eparpillés sur le plateau
+        #     # On favorise deux pions côte à côte
+        #     neighbors_coord = ((x+1, y), (x-1, y), (x, y+1), (x, y-1))
+        #     neighbors = [
+        #         c for c in neighbors_coord if self._board._isOnBoard(c[0], c[1])]
+        #     for n in neighbors:
+        #         if self._board[Goban.Board.flatten((n[0], n[1]))] == self._board._WHITE:
+        #             res = res + ennemi*400
 
-            # Les pions ne doivent pas être eparpillés sur le plateau
-            # On favorise deux pions côte à côte
-            neighbors_coord = ((x+1, y), (x-1, y), (x, y+1), (x, y-1))
-            neighbors = [
-                c for c in neighbors_coord if self._board._isOnBoard(c[0], c[1])]
-            for n in neighbors:
-                if self._board[Goban.Board.flatten((n[0], n[1]))] == self._board._WHITE:
-                    res = res + ennemi*400
-
-            # Les pions alignés doivent former une diagonale
-            diag_coord = (x+1, y+1)
-            if self._board._isOnBoard(diag_coord[0], diag_coord[1]):
-                if self._board[Goban.Board.flatten((diag_coord[0], diag_coord[1]))] == self._board._WHITE:
-                    res = res + ennemi*100
+        #     # Les pions alignés doivent former une diagonale
+        #     diag_coord = (x+1, y+1)
+        #     if self._board._isOnBoard(diag_coord[0], diag_coord[1]):
+        #         if self._board[Goban.Board.flatten((diag_coord[0], diag_coord[1]))] == self._board._WHITE:
+        #             res = res + ennemi*100
 
         return res
 

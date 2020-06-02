@@ -98,10 +98,8 @@ class Opening:
         # res = territory.count_territories_black() - territory.count_territories_white()
 
         if self._mycolor == Goban.Board._BLACK:
-            print("MY COLOR BLACK : ", self._mycolor)
             res = black - white
         else:
-            print("MY COLOR WHITE : ", self._mycolor)
             res = white - black
 
         return res
