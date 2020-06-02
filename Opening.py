@@ -60,12 +60,12 @@ class Opening:
             if (1 <= x <= 7) and (1 <= y <= 7):  # se situe sur le deuxième ligne
                 black = black + 3000
             # if territory.in_N(x, y) or territory.in_NE(x, y) or territory.in_NO(x, y) or territory.in_SE(x, y):
-            #     res = res + 6000
+            #     black = black + 3000
             # if ((territory.north_east_territory()[0] == 1)
             #     and ((territory.south_territory()[0] == 1)
             #         or (territory.east_territory()[0] == 1)
             #         or (territory.west_territory()[0] == 1))):
-            #     res = res + 2000
+            #     black = black + 2000
 
         for move in self._white_moves:
             ufcoord = Goban.Board.name_to_coord(move)
@@ -95,6 +95,8 @@ class Opening:
 
         black = black + territory.count_territories_black()
         white = white + territory.count_territories_white()
+
+        
         # res = territory.count_territories_black() - territory.count_territories_white()
 
         if self._mycolor == Goban.Board._BLACK:

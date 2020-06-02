@@ -14,9 +14,11 @@ class Territory:
         self._black_moves = black_moves
         self._white_moves = white_moves
 
-    def dist(self, A, B):
-        res = np.sqrt( (A[0] - B[0])*(A[0] - B[0]) - (A[1] - B[1])(A[1] - B[1]) )
-        return res
+    def distance(self, A, B):
+        # print(" A : ", A)
+        # print("B : ", B)
+        dist = np.sqrt( ((A[0] - B[0])**2) + ((A[1] - B[1])**2) )
+        return dist
 
     def in_N(self, x, y):
         return (3 <= x <= 5) and (6 <= y <= 8)
@@ -77,26 +79,26 @@ class Territory:
 
     def count_territories_black(self):
         count = 0
-        if self.north_territory()[2]: count = count + 1 
-        if self.south_territory()[2]: count = count + 1 
-        if self.east_territory()[2]: count = count + 1 
-        if self.west_territory()[2]: count = count + 1 
-        if self.north_east_territory()[2]: count = count + 1 
-        if self.north_west_territory()[2]: count = count + 1 
-        if self.south_east_territory()[2]: count = count + 1 
-        if self.south_west_territory()[2]: count = count + 1 
+        if self.north_territory()[0] >= 1: count = count + 1 
+        if self.south_territory()[0] >= 1: count = count + 1 
+        if self.east_territory()[0] >= 1: count = count + 1 
+        if self.west_territory()[0] >= 1: count = count + 1 
+        if self.north_east_territory()[0] >= 1: count = count + 1 
+        if self.north_west_territory()[0] >= 1: count = count + 1 
+        if self.south_east_territory()[0] >= 1: count = count + 1 
+        if self.south_west_territory()[0] >= 1: count = count + 1 
         return count
 
     def count_territories_white(self):
         count = 0
-        if not self.north_territory()[2]: count = count + 1 
-        if not self.south_territory()[2]: count = count + 1 
-        if not self.east_territory()[2]: count = count + 1 
-        if not self.west_territory()[2]: count = count + 1 
-        if not self.north_east_territory()[2]: count = count + 1 
-        if not self.north_west_territory()[2]: count = count + 1 
-        if not self.south_east_territory()[2]: count = count + 1 
-        if not self.south_west_territory()[2]: count = count + 1 
+        if self.north_territory()[1] >= 1: count = count + 1 
+        if self.south_territory()[1] >= 1: count = count + 1 
+        if self.east_territory()[1] >= 1: count = count + 1 
+        if self.west_territory()[1] >= 1: count = count + 1 
+        if self.north_east_territory()[1] >= 1: count = count + 1 
+        if self.north_west_territory()[1] >= 1: count = count + 1 
+        if self.south_east_territory()[1] >= 1: count = count + 1 
+        if self.south_west_territory()[1] >= 1: count = count + 1 
         return count
 
 
@@ -116,7 +118,7 @@ class Territory:
             y = ufcoord[1]
             if self.in_N(x, y):
                 w = w + 1
-        return b, w, b > w
+        return b, w, b >= w
 
     def north_east_territory(self):
         b = 0
@@ -134,7 +136,7 @@ class Territory:
             y = ufcoord[1]
             if self.in_NE(x, y):
                 w = w + 1
-        return b, w, b > w
+        return b, w, b >= w
     
     def north_west_territory(self):
         b = 0
@@ -152,7 +154,7 @@ class Territory:
             y = ufcoord[1]
             if self.in_NO(x, y):
                 w = w + 1
-        return b, w, b > w
+        return b, w, b >= w
     
     # Return True si le territoire appartient à Noir, False sinon
     def east_territory(self):
@@ -171,7 +173,7 @@ class Territory:
             y = ufcoord[1]
             if self.in_E(x, y):
                 w = w + 1
-        return b, w, b > w
+        return b, w, b >= w
     
     # Return True si le territoire appartient à Noir, False sinon
     def south_territory(self):
@@ -190,7 +192,7 @@ class Territory:
             y = ufcoord[1]
             if self.in_S(x, y):
                 w = w + 1
-        return b, w, b > w
+        return b, w, b >= w
     
     def south_east_territory(self):
         b = 0
@@ -208,7 +210,7 @@ class Territory:
             y = ufcoord[1]
             if self.in_SE(x, y):
                 w = w + 1
-        return b, w, b > w
+        return b, w, b >= w
 
     def south_west_territory(self):
         b = 0
@@ -226,7 +228,7 @@ class Territory:
             y = ufcoord[1]
             if self.in_SO(x, y):
                 w = w + 1
-        return b, w, b > w
+        return b, w, b >= w
     
     # Return True si le territoire appartient à Noir, False sinon
     def west_territory(self):
@@ -245,4 +247,4 @@ class Territory:
             y = ufcoord[1]
             if self.in_O(x, y):
                 w = w + 1
-        return b, w, b > w
+        return b, w, b >= w

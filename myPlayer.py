@@ -207,11 +207,14 @@ class myPlayer(PlayerInterface):
 
         self._board.push(best_move)
         self._count = self._count + 1
+        
+        
 
-        if self._board.next_player() == self._board._WHITE:
+        if self._mycolor == Goban.Board._BLACK:
             self._black_goban.append(best_move)
         else:
             self._white_goban.append(best_move)
+            
         return Goban.Board.flat_to_name(best_move)
 
     def alphabeta(self, alpha, beta, maximizePlayer, depth, move, start):
@@ -312,7 +315,7 @@ class myPlayer(PlayerInterface):
         #             break
         #     return res
 
-        if self._count < 2:  # Evaluation Fuseki pour les premiers coups
+        if self._count < 10:  # Evaluation Fuseki pour les premiers coups
             opening = Opening.Opening(
                 self._board, self._mycolor, black_moves, white_moves, self._black_goban, self._white_goban)
             res = opening.evaluate_opening()
