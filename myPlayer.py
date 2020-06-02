@@ -136,6 +136,14 @@ class myPlayer(PlayerInterface):
     def get_last_white(self):
         if (self._white_goban != []):
             return self._board.unflatten(self._white_goban[-1])
+ 
+    def get_last_enemy(self):
+        if  self._board._historyMoveNames != []:
+            if self._board._nextPlayer() == self._board._BLACK:
+                return self._board._historyMoveNames[(self._count * 2) - 1]
+            else:
+                return self._board._historyMoveNames[self._count * 2]
+
 
     def getPlayerMove(self):
 
@@ -326,6 +334,9 @@ class myPlayer(PlayerInterface):
                 self._board, self._mycolor, self._count, black_moves, white_moves, self._black_goban, self._white_goban)
             res = middle.evaluation()
             return res
+
+
+
         # # On évalue la position des pions NOIRS sur le plateau
         # for move in black_moves:
         #     ufcoord = Goban.Board.name_to_coord(move)
