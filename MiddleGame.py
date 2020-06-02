@@ -40,8 +40,7 @@ class MiddleGame:
             return self._board._historyMoveNames[(self._count * 2)]
 
     def evaluation(self):
-        print("LAST BLACK ", self.get_last_enemy("BLACK"))
-        print("LAST WHITE ", self.get_last_enemy("WHITE"))
+
         territory = Territory.Territory(
             self._board, self._black_moves, self._white_moves, self._black_goban, self._white_goban)
         shape = Shape.Shape(self._board, self._black_moves,
@@ -84,25 +83,24 @@ class MiddleGame:
         #                     if shape._is_tobi(x_white, y_white, last_white):
         #                         white = white + 6000
 
-        # if (self._white_goban != []):
-        #     last_white = self.get_last_white()
-        #     last_black = self.get_last_black()
-        #     # print("LAST WHITE ", self._board.coord_to_name(last_white))
-        #     # print("LAST BLACK ", self.get_last_black())
-        #     if territory.distance(last_white, last_black) <= 2:
-        #         # print("DISTAAAAAAAAAAAAAAAAAAAAAANC entre ", Goban.Board.coord_to_name(last_white), " et ", Goban.Board.coord_to_name(
-        #         #     last_black), " : ", territory.distance(last_white, last_black))
-        #         for move in self._white_moves:
-        #             ufcoord = Goban.Board.name_to_coord(move)
-        #             x_white = ufcoord[0]
-        #             y_white = ufcoord[1]
-        #             if shape._is_tobi(x_white, y_white, last_white):
-        #                 white = white + 6000
-        #             # print(" last white : ",  Goban.Board.coord_to_name(last_white))
-        #             # print(" last black : ",  Goban.Board.coord_to_name(last_black))
-        #             # if territory.in_SE(last_white[0], last_white[1]) and territory.in_S(x_white, y_white):
-        #             #     if shape._is_tobi(x_white, y_white, last_white):
-        #             #         white = white + 6000
+        if (self._white_goban != []):
+            last_white = Goban.Board.name_to_coord(self.get_last_enemy("WHITE"))
+            last_black = Goban.Board.name_to_coord(self.get_last_enemy("BLACK"))
+
+            if territory.distance(last_white, last_black) <= 2:
+                print("DISTAAAAAAAAAAAAAAAAAAAAAANC entre ", Goban.Board.coord_to_name(last_white), " et ", Goban.Board.coord_to_name(
+                    last_black), " : ", territory.distance(last_white, last_black))
+                for move in self._white_moves:
+                    ufcoord = Goban.Board.name_to_coord(move)
+                    x_white = ufcoord[0]
+                    y_white = ufcoord[1]
+                    if shape._is_tobi(x_white, y_white, last_white):
+                        white = white + 6000
+                    # print(" last white : ",  Goban.Board.coord_to_name(last_white))
+                    # print(" last black : ",  Goban.Board.coord_to_name(last_black))
+                    # if territory.in_SE(last_white[0], last_white[1]) and territory.in_S(x_white, y_white):
+                    #     if shape._is_tobi(x_white, y_white, last_white):
+                    #         white = white + 6000
 
             # for move in self._black_moves:
             #     ufcoord = Goban.Board.name_to_coord(move)
