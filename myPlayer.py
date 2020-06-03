@@ -34,101 +34,6 @@ class myPlayer(PlayerInterface):
     def getPlayerName(self):
         return "Random Player"
 
-    # def in_N(self, x, y):
-    #     return (3 <= x <= 5) and (6 <= y <=8)
-    # def in_E(self, x, y):
-    #     return (6 <= x <= 8) and (3 <= y <= 5)
-    # def in_O(self, x, y):
-    #     return (0 <= x <= 2) and (3 <= y <= 5)
-    # def in_S(self, x, y):
-    #     return (3 <= x <= 5) and (0 <= y <= 2)
-
-    # def in_NE(self, x, y):
-    #     return (6 <= x <=8) and (6 <= y <=8)
-    # def in_NO(self, x, y):
-    #     return (0 <= x <= 2) and (6 <= y <= 8)
-    # def in_SO(self, x, y):
-    #     return (0 <= x <= 2) and (0 <= y <= 2)
-    # def in_SE(self, x, y):
-    #     return (6 <= x <= 8) and (0 <= y <= 2)
-
-    # # Return True si le territoire appartient à Noir, False sinon
-    # # Ainsi que le nombre de pièces dans chaque territoire
-    # def north_territory(self, x, y, black_moves, white_moves):
-    #     b = 0
-    #     w = 0
-    #     for move in black_moves:
-    #         ufcoord = Goban.Board.name_to_coord(move)
-    #         x = ufcoord[0]
-    #         y = ufcoord[1]
-    #         if self.in_N(x, y):
-    #             b = b + 1
-
-    #     for move in white_moves:
-    #         ufcoord = Goban.Board.name_to_coord(move)
-    #         x = ufcoord[0]
-    #         y = ufcoord[1]
-    #         if self.in_N(x, y):
-    #             w = w + 1
-    #     return b, w, b > w
-
-    # # Return True si le territoire appartient à Noir, False sinon
-    # def east_territory(self, x, y, black_moves, white_moves):
-    #     b = 0
-    #     w = 0
-    #     for move in black_moves:
-    #         ufcoord = Goban.Board.name_to_coord(move)
-    #         x = ufcoord[0]
-    #         y = ufcoord[1]
-    #         if self.in_E(x, y):
-    #             b = b + 1
-
-    #     for move in white_moves:
-    #         ufcoord = Goban.Board.name_to_coord(move)
-    #         x = ufcoord[0]
-    #         y = ufcoord[1]
-    #         if self.in_E(x, y):
-    #             w = w + 1
-    #     return b, w, b > w
-
-    # # Return True si le territoire appartient à Noir, False sinon
-    # def south_territory(self, x, y, black_moves, white_moves):
-    #     b = 0
-    #     w = 0
-    #     for move in black_moves:
-    #         ufcoord = Goban.Board.name_to_coord(move)
-    #         x = ufcoord[0]
-    #         y = ufcoord[1]
-    #         if self.in_S(x, y):
-    #             b = b + 1
-
-    #     for move in white_moves:
-    #         ufcoord = Goban.Board.name_to_coord(move)
-    #         x = ufcoord[0]
-    #         y = ufcoord[1]
-    #         if self.in_S(x, y):
-    #             w = w + 1
-    #     return b, w, b > w
-
-    # # Return True si le territoire appartient à Noir, False sinon
-    # def west_territory(self, x, y, black_moves, white_moves):
-    #     b = 0
-    #     w = 0
-    #     for move in black_moves:
-    #         ufcoord = Goban.Board.name_to_coord(move)
-    #         x = ufcoord[0]
-    #         y = ufcoord[1]
-    #         if self.in_O(x, y):
-    #             b = b + 1
-
-    #     for move in white_moves:
-    #         ufcoord = Goban.Board.name_to_coord(move)
-    #         x = ufcoord[0]
-    #         y = ufcoord[1]
-    #         if self.in_O(x, y):
-    #             w = w + 1
-    #     return b, w, b > w
-
     def get_last_black(self):
         if (self._black_goban != []):
             return self._board.unflatten(self._black_goban[-1])
@@ -160,22 +65,10 @@ class myPlayer(PlayerInterface):
         max = -100000000
         alpha = -100000000
         beta = +100000000
-        depth = 7
+        depth = 12
         best_move = 0
         start = 0
         end = 0
-        first_black = self._board.name_to_coord('C6')
-        flatt_first_black = self._board.flatten(first_black)
-
-        second_black = self._board.name_to_coord('F3')
-        flatt_second_black = self._board.flatten(second_black)
-
-        first_white = self._board.name_to_coord('C4')
-        flatt_first_white = self._board.flatten(first_white)
-
-        second_white = self._board.name_to_coord('C7')
-        flatt_second_white = self._board.flatten(second_white)
-
         moves = ['A1', 'B1', 'C1', 'D1', 'E1', 'F1', 'G1', 'H1', 'J1', 'A2', 'B2',
                  'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'J2', 'A3', 'B3', 'C3', 'D3',
                  'E3', 'F3', 'G3', 'H3', 'J3', 'A4', 'B4', 'C4', 'D4', 'E4', 'F4',
@@ -207,58 +100,68 @@ class myPlayer(PlayerInterface):
                     self._board.push(Goban.Board.flatten(
                         Goban.Board.name_to_coord(best_move)))
                     self._count = self._count + 1
-                    self._black_goban.append(Goban.Board.flatten(Goban.Board.name_to_coord(best_move)))
+                    self._black_goban.append(Goban.Board.flatten(
+                        Goban.Board.name_to_coord(best_move)))
                     return best_move
 
         if self._count == 0 and self._mycolor == Goban.Board._WHITE:  # Premier coup à jouer pour blanc
             for i in range(0, 510):
                 if data_opening[i]['moves'][0] == self.get_last_enemy("BLACK"):
                     best_move = data_opening[i]['moves'][1]
-                    self._board.push(Goban.Board.flatten(Goban.Board.name_to_coord(data_opening[i]['moves'][1])))
+                    self._board.push(Goban.Board.flatten(
+                        Goban.Board.name_to_coord(data_opening[i]['moves'][1])))
                     self._count = self._count + 1
-                    self._white_goban.append(Goban.Board.flatten(Goban.Board.name_to_coord(best_move)))
+                    self._white_goban.append(Goban.Board.flatten(
+                        Goban.Board.name_to_coord(best_move)))
                     return best_move
 
         elif self._count == 1 and self._mycolor == Goban.Board._BLACK:  # Deuxième coup à jouer pour black
             for i in range(0, 510):
                 if data_opening[i]['moves'][1] == self.get_last_enemy("WHITE"):
                     best_move = data_opening[i]['moves'][2]
-                    self._board.push(Goban.Board.flatten(Goban.Board.name_to_coord(data_opening[i]['moves'][2])))
+                    self._board.push(Goban.Board.flatten(
+                        Goban.Board.name_to_coord(data_opening[i]['moves'][2])))
                     self._count = self._count + 1
-                    self._black_goban.append(Goban.Board.flatten(Goban.Board.name_to_coord(best_move)))
+                    self._black_goban.append(Goban.Board.flatten(
+                        Goban.Board.name_to_coord(best_move)))
                     return best_move
 
         last_val = 0
-        while (end - start) < 5:
-            print("end - start ICIIIIIIIIIIII", end - start)
-            start = timeit.timeit()
-            for move in self._board.legal_moves():
-                self._board.push(move)
-                val = self.alphabeta(
-                    alpha, beta, False, depth-1, move, start)
-                self._board.pop()
-                if val > alpha:
-                    alpha = val
-                    last_val = move
-            end = timeit.timeit()
-            depth = depth + 1
-            best_move = last_val
 
-        # for move in self._board.legal_moves():
-        #     self._board.push(move)
-        #     val = self.alphabeta(
-        #         alpha, beta, False, depth-1, move, start)
-        #     self._board.pop()
-        #     if val > alpha:
-        #         alpha = val
-        #         best_move = move
+        # start = timeit.timeit()
+        # while (end - start) < 0.5:
+        #     print("end - start ICIIIIIIIIIIII ", end - start)
+        #     for move in self._board.legal_moves():
+        #         self._board.push(move)
+        #         val = self.alphabeta(
+        #             alpha, beta, False, depth-1, move, start)
+        #         self._board.pop()
+        #         if val > alpha:
+        #             alpha = val
+        #             last_val = move
+        #     depth = depth + 1
+        #     best_move = last_val
+        # end = timeit.timeit()
+
+        start = timeit.timeit()
+        for move in self._board.legal_moves():
+            self._board.push(move)
+            val = self.alphabeta(
+                alpha, beta, False, depth-1, move, start)
+            self._board.pop()
+            if val > alpha:
+                alpha = val
+                best_move = move
+        end = timeit.timeit()
+        # print("end - start ICIIIIIIIIIIII ", end - start)
 
         if self._mycolor == Goban.Board._BLACK:
             self._black_goban.append(best_move)
         else:
             self._white_goban.append(best_move)
-
-        # print("HISTORIQUEEEEEEEEEEEEEEEEEEE ", self._board._historyMoveNames)
+        
+        # print("WHITTTTTTTE GOBAN ", self._white_goban)
+        
         self._board.push(best_move)
         self._count = self._count + 1
         return Goban.Board.flat_to_name(best_move)

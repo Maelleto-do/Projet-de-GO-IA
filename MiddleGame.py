@@ -14,18 +14,26 @@ class MiddleGame:
         self._mycolor = mycolor
         self._count = count
 
+    # def get_last_enemy(self, color):
+    #     if self._board._historyMoveNames != []:
+    #         if self._board._nextPlayer == self._board._WHITE:
+    #             if color == "BLACK":
+    #                 return Goban.Board.coord_to_name(Goban.Board.unflatten(self._black_goban[-1]))
+    #             else:
+    #                 return self._board._historyMoveNames[(self._count * 2) - 1]
+    #         else:
+    #             if color == "BLACK":
+    #                 return self._board._historyMoveNames[self._count * 2]
+    #             else:
+    #                 return Goban.Board.coord_to_name(Goban.Board.unflatten(self._white_goban[-1]))
+
     def get_last_enemy(self, color):
         if self._board._historyMoveNames != []:
-            if self._board._nextPlayer == self._board._WHITE:
-                if color == "BLACK":
-                    return Goban.Board.coord_to_name(Goban.Board.unflatten(self._black_goban[-1]))
-                else:
-                    return self._board._historyMoveNames[(self._count * 2) - 1]
+            if color == "BLACK":
+                return self._board._historyMoveNames[self._count * 2]
             else:
-                if color == "BLACK":
-                    return self._board._historyMoveNames[self._count * 2]
-                else:
-                    return Goban.Board.coord_to_name(Goban.Board.unflatten(self._white_goban[-1]))
+                return self._board._historyMoveNames[(self._count * 2) - 1]
+
 
     def liberties(self, coord):
         lib = 0
@@ -51,20 +59,6 @@ class MiddleGame:
         for n in self._white_moves:
             res = res + 1
         return res
- 
-
-    # def liberties_attack(self, coord_victim, coord_attacker):
-    #     lib = self.liberties(coord_victim)
-    #     x = coord_victim[0]
-    #     y = coord_victim[1]
-    #     neighbors_coord = ((x+1, y), (x-1, y), (x, y+1), (x, y-1))
-    #     neighbors = [
-    #         c for c in neighbors_coord if self._board._isOnBoard(c[0], c[1])]
-    #     for n in neighbors:
-    #         if ((self._board[Goban.Board.flatten((n[0], n[1]))] == 0) and (n[0] == coord_attacker[0])
-    #         and (n[1] == coord_attacker[1])):
-    #             lib = lib - 1
-    #     return lib
 
     def liberties_white(self):
         res = 0
@@ -78,8 +72,10 @@ class MiddleGame:
             res = res + self.liberties(Goban.Board.name_to_coord(move))
         return res
 
-
     def evaluation(self):
+
+        self.get_last_enemy("BLACK")
+        self.get_last_enemy("WHITE")
 
         territory = Territory.Territory(
             self._board, self._black_moves, self._white_moves, self._black_goban, self._white_goban)
