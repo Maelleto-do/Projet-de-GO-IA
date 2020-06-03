@@ -200,32 +200,30 @@ class myPlayer(PlayerInterface):
             data_opening=json.load(json_data)
 
 
-        print("self count COUUUUUUUUUUUUUUUUUUNT ", self._count)
+        # print("self count COUUUUUUUUUUUUUUUUUUNT ", self._count)
         if self._count == 0 and self._mycolor == Goban.Board._WHITE:  # Premier coup à jouer pour blanc
                 # print("LAST ENNEMYYYYYYYY ", self.get_last_enemy("BLACK"))
                 for i in range(0, 509):
                     if data_opening[i]['moves'][0] == self.get_last_enemy("BLACK"):
-                        # print(
-                        #     "IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII ", i)
-                        best_move=Goban.Board.flatten(
-                            data_opening[i]['moves'][1])
-                        self._board.push(best_move)
-                        self._count=self._count + 1
-                        self._white_goban.append(best_move)
-                        return Goban.Board.flat_to_name(best_move)
+                       for move in self._board.legal_moves():
+                            if move == data_opening[i]['moves'][1]: 
+                                best_move = move
+                                self._board.push(best_move)
+                                self._count=self._count + 1
+                                self._white_goban.append(best_move)
+                                return Goban.Board.flat_to_name(best_move)
 
         if self._count == 1 and self._mycolor == Goban.Board._BLACK:  # Deuxième coup à jouer pour black
                 # print("LAST ENNEMYYYYYYYY ", self.get_last_enemy("WHITE"))
                 for i in range(0, 509):
                     if data_opening[i]['moves'][1] == self.get_last_enemy("WHITE"):
-                        # print(
-                        #     "IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII ", i)
-                        best_move=Goban.Board.flatten(
-                            data_opening[i]['moves'][2])
-                        self._board.push(best_move)
-                        self._count=self._count + 1
-                        self._black_goban.append(best_move)
-                        return Goban.Board.flat_to_name(best_move)
+                        for move in self._board.legal_moves():
+                            if move == data_opening[i]['moves'][2]:
+                                best_move = move
+                                self._board.push(best_move)
+                                self._count=self._count + 1
+                                self._black_goban.append(best_move)
+                                return Goban.Board.flat_to_name(best_move)
 
         for move in self._board.legal_moves():
             self._board.push(move)
@@ -339,7 +337,7 @@ class myPlayer(PlayerInterface):
         #             break
         #     return res
 
-        if self._count < 2:  # Evaluation Fuseki pour les premiers coups
+        if self._count < 4:  # Evaluation Fuseki pour les premiers coups
             opening=Opening.Opening(
                 self._board, self._mycolor, black_moves, white_moves, self._black_goban, self._white_goban)
             res=opening.evaluate_opening()
