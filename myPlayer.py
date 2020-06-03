@@ -228,31 +228,30 @@ class myPlayer(PlayerInterface):
                     self._black_goban.append(Goban.Board.flatten(Goban.Board.name_to_coord(best_move)))
                     return best_move
 
-        # last_val = 0
-        # depth = 7
-        # while (end - start) < 5:
-        #     print("end - start ICIIIIIIIIIIII", end - start)
-        #     start = timeit.timeit()
-        #     for move in self._board.legal_moves():
-        #         self._board.push(move)
-        #         val = self.alphabeta(
-        #             alpha, beta, False, depth-1, move, start)
-        #         self._board.pop()
-        #         if val > alpha:
-        #             alpha = val
-        #             last_val = move
-        #     end = timeit.timeit()
-        #     depth = depth + 1
-        #     best_move = last_val
+        last_val = 0
+        while (end - start) < 5:
+            print("end - start ICIIIIIIIIIIII", end - start)
+            start = timeit.timeit()
+            for move in self._board.legal_moves():
+                self._board.push(move)
+                val = self.alphabeta(
+                    alpha, beta, False, depth-1, move, start)
+                self._board.pop()
+                if val > alpha:
+                    alpha = val
+                    last_val = move
+            end = timeit.timeit()
+            depth = depth + 1
+            best_move = last_val
 
-        for move in self._board.legal_moves():
-            self._board.push(move)
-            val = self.alphabeta(
-                alpha, beta, False, depth-1, move, start)
-            self._board.pop()
-            if val > alpha:
-                alpha = val
-                best_move = move
+        # for move in self._board.legal_moves():
+        #     self._board.push(move)
+        #     val = self.alphabeta(
+        #         alpha, beta, False, depth-1, move, start)
+        #     self._board.pop()
+        #     if val > alpha:
+        #         alpha = val
+        #         best_move = move
 
         if self._mycolor == Goban.Board._BLACK:
             self._black_goban.append(best_move)
