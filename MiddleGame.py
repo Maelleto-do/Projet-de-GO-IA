@@ -14,18 +14,6 @@ class MiddleGame:
         self._mycolor = mycolor
         self._count = count
 
-    # def get_last_enemy(self, color):
-    #     if self._board._historyMoveNames != []:
-    #         if self._board._nextPlayer == self._board._WHITE:
-    #             if color == "BLACK":
-    #                 return Goban.Board.coord_to_name(Goban.Board.unflatten(self._black_goban[-1]))
-    #             else:
-    #                 return self._board._historyMoveNames[(self._count * 2) - 1]
-    #         else:
-    #             if color == "BLACK":
-    #                 return self._board._historyMoveNames[self._count * 2]
-    #             else:
-    #                 return Goban.Board.coord_to_name(Goban.Board.unflatten(self._white_goban[-1]))
 
     def get_last_enemy(self, color):
         if self._board._historyMoveNames != []:

@@ -30,6 +30,9 @@ class myPlayer(PlayerInterface):
         self._black_goban = []
         self._white_goban = []
         self._count = 0
+        self._last_best_move = 0
+        self._start = 0
+        self._end = 0
 
     def getPlayerName(self):
         return "Random Player"
@@ -65,10 +68,9 @@ class myPlayer(PlayerInterface):
         max = -100000000
         alpha = -100000000
         beta = +100000000
-        depth = 12
+        depth = 10
         best_move = 0
-        start = 0
-        end = 0
+
         moves = ['A1', 'B1', 'C1', 'D1', 'E1', 'F1', 'G1', 'H1', 'J1', 'A2', 'B2',
                  'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'J2', 'A3', 'B3', 'C3', 'D3',
                  'E3', 'F3', 'G3', 'H3', 'J3', 'A4', 'B4', 'C4', 'D4', 'E4', 'F4',
@@ -128,40 +130,42 @@ class myPlayer(PlayerInterface):
 
         last_val = 0
 
-        # start = timeit.timeit()
-        # while (end - start) < 0.5:
-        #     print("end - start ICIIIIIIIIIIII ", end - start)
-        #     for move in self._board.legal_moves():
-        #         self._board.push(move)
-        #         val = self.alphabeta(
-        #             alpha, beta, False, depth-1, move, start)
-        #         self._board.pop()
-        #         if val > alpha:
-        #             alpha = val
-        #             last_val = move
-        #     depth = depth + 1
-        #     best_move = last_val
-        # end = timeit.timeit()
+        self._start = timeit.default_timer()
+        while (self._end - self._start) <= 4:
+            for move in self._board.legal_moves():
+                self._board.push(move)
+                val = self.alphabeta(
+                    alpha, beta, False, depth-1, move, self._start)
+                self._board.pop()
+                self._end = timeit.default_timer()
+                print("LAAAAAAAAA end - start  ", self._end - self._start, "depth = ",
+                  depth, "move ", Goban.Board.flat_to_name(self._last_best_move))
+                if val > alpha:
+                    alpha = val
+                    self._last_best_move = move
+            depth += 1
+        
 
-        start = timeit.timeit()
-        for move in self._board.legal_moves():
-            self._board.push(move)
-            val = self.alphabeta(
-                alpha, beta, False, depth-1, move, start)
-            self._board.pop()
-            if val > alpha:
-                alpha = val
-                best_move = move
-        end = timeit.timeit()
-        # print("end - start ICIIIIIIIIIIII ", end - start)
+        best_move = self._last_best_move
+
+        # self._start = timeit.default_timer()
+        # # end = timeit.default_timer()
+        # for move in self._board.legal_moves():
+        #     self._board.push(move)
+        #     val = self.alphabeta(
+        #         alpha, beta, False, depth-1, move)
+        #     self._board.pop()
+        #     if val > alpha:
+        #         alpha = val
+        #         best_move = move
+        # self._end = timeit.default_timer()
+        # print("LAAAAAAAAA end - start  ", self._end - self._start, "depth = ", depth, "move ", Goban.Board.flat_to_name(self._last_best_move))
 
         if self._mycolor == Goban.Board._BLACK:
             self._black_goban.append(best_move)
         else:
             self._white_goban.append(best_move)
-        
-        # print("WHITTTTTTTE GOBAN ", self._white_goban)
-        
+
         self._board.push(best_move)
         self._count = self._count + 1
         return Goban.Board.flat_to_name(best_move)
@@ -176,6 +180,8 @@ class myPlayer(PlayerInterface):
                  'B7', 'C7', 'D7', 'E7', 'F7', 'G7', 'H7', 'J7', 'A8', 'B8', 'C8',
                  'D8', 'E8', 'F8', 'G8', 'H8', 'J8', 'A9', 'B9', 'C9', 'D9', 'E9',
                  'F9', 'G9', 'H9', 'J9', 'PASS']
+
+        
 
         if self._board.is_game_over():
             res = self._board.result()
@@ -194,7 +200,6 @@ class myPlayer(PlayerInterface):
         # AMI
         if maximizePlayer == True:
             for move in self._board.legal_moves():
-                end = timeit.default_timer()
                 self._board.push(move)
                 alpha = max(alpha, self.alphabeta(
                     alpha, beta, False, depth - 1, move, start))
@@ -206,11 +211,11 @@ class myPlayer(PlayerInterface):
         # ENNEMI
         elif maximizePlayer == False:
             for move in self._board.legal_moves():
-                end = timeit.default_timer()
                 self._board.push(move)
                 beta = min(beta, self.alphabeta(
                     alpha, beta, True, depth - 1, move, start))
                 self._board.pop()
+                self._end = timeit.default_timer()
                 if alpha >= beta:
                     return alpha
                 return beta
