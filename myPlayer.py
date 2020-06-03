@@ -8,7 +8,7 @@ Right now, this class contains the copy of the randomPlayer. But you have to cha
 import time
 import timeit
 import Goban
-from random import choice
+from random import choice, randint
 from playerInterface import *
 import Territory
 import Opening
@@ -163,6 +163,7 @@ class myPlayer(PlayerInterface):
         depth = 7
         best_move = 0
         start = 0
+        end = 0
         first_black = self._board.name_to_coord('C6')
         flatt_first_black = self._board.flatten(first_black)
 
@@ -195,43 +196,63 @@ class myPlayer(PlayerInterface):
                 print("equal")
             return "PASS"
 
-
         with open("games.json", 'r') as json_data:
-            data_opening=json.load(json_data)
+            data_opening = json.load(json_data)
 
+        if self._count == 0 and self._mycolor == Goban.Board._BLACK:  # Premier coup à jouer pour noir
+            for l in range(0, 510):
+                i = randint(0, 510)
+                if data_opening[i]['winner'] == "B":
+                    best_move = data_opening[i]['moves'][0]
+                    self._board.push(Goban.Board.flatten(
+                        Goban.Board.name_to_coord(best_move)))
+                    self._count = self._count + 1
+                    self._black_goban.append(Goban.Board.flatten(Goban.Board.name_to_coord(best_move)))
+                    return best_move
 
-        # print("self count COUUUUUUUUUUUUUUUUUUNT ", self._count)
         if self._count == 0 and self._mycolor == Goban.Board._WHITE:  # Premier coup à jouer pour blanc
-                # print("LAST ENNEMYYYYYYYY ", self.get_last_enemy("BLACK"))
-                for i in range(0, 509):
-                    if data_opening[i]['moves'][0] == self.get_last_enemy("BLACK"):
-                       for move in self._board.legal_moves():
-                            if move == data_opening[i]['moves'][1]: 
-                                best_move = move
-                                self._board.push(best_move)
-                                self._count=self._count + 1
-                                self._white_goban.append(best_move)
-                                return Goban.Board.flat_to_name(best_move)
+            for i in range(0, 510):
+                if data_opening[i]['moves'][0] == self.get_last_enemy("BLACK"):
+                    best_move = data_opening[i]['moves'][1]
+                    self._board.push(Goban.Board.flatten(Goban.Board.name_to_coord(data_opening[i]['moves'][1])))
+                    self._count = self._count + 1
+                    self._white_goban.append(Goban.Board.flatten(Goban.Board.name_to_coord(best_move)))
+                    return best_move
 
-        if self._count == 1 and self._mycolor == Goban.Board._BLACK:  # Deuxième coup à jouer pour black
-                # print("LAST ENNEMYYYYYYYY ", self.get_last_enemy("WHITE"))
-                for i in range(0, 509):
-                    if data_opening[i]['moves'][1] == self.get_last_enemy("WHITE"):
-                        for move in self._board.legal_moves():
-                            if move == data_opening[i]['moves'][2]:
-                                best_move = move
-                                self._board.push(best_move)
-                                self._count=self._count + 1
-                                self._black_goban.append(best_move)
-                                return Goban.Board.flat_to_name(best_move)
+        elif self._count == 1 and self._mycolor == Goban.Board._BLACK:  # Deuxième coup à jouer pour black
+            for i in range(0, 510):
+                if data_opening[i]['moves'][1] == self.get_last_enemy("WHITE"):
+                    best_move = data_opening[i]['moves'][2]
+                    self._board.push(Goban.Board.flatten(Goban.Board.name_to_coord(data_opening[i]['moves'][2])))
+                    self._count = self._count + 1
+                    self._black_goban.append(Goban.Board.flatten(Goban.Board.name_to_coord(best_move)))
+                    return best_move
+
+        # last_val = 0
+        # depth = 7
+        # while (end - start) < 5:
+        #     print("end - start ICIIIIIIIIIIII", end - start)
+        #     start = timeit.timeit()
+        #     for move in self._board.legal_moves():
+        #         self._board.push(move)
+        #         val = self.alphabeta(
+        #             alpha, beta, False, depth-1, move, start)
+        #         self._board.pop()
+        #         if val > alpha:
+        #             alpha = val
+        #             last_val = move
+        #     end = timeit.timeit()
+        #     depth = depth + 1
+        #     best_move = last_val
 
         for move in self._board.legal_moves():
             self._board.push(move)
-            val=self.alphabeta(alpha, beta, False, depth-1, move, start)
+            val = self.alphabeta(
+                alpha, beta, False, depth-1, move, start)
             self._board.pop()
             if val > alpha:
-                alpha=val
-                best_move=move
+                alpha = val
+                best_move = move
 
         if self._mycolor == Goban.Board._BLACK:
             self._black_goban.append(best_move)
@@ -240,12 +261,12 @@ class myPlayer(PlayerInterface):
 
         # print("HISTORIQUEEEEEEEEEEEEEEEEEEE ", self._board._historyMoveNames)
         self._board.push(best_move)
-        self._count=self._count + 1
+        self._count = self._count + 1
         return Goban.Board.flat_to_name(best_move)
 
     def alphabeta(self, alpha, beta, maximizePlayer, depth, move, start):
 
-        moves=['A1', 'B1', 'C1', 'D1', 'E1', 'F1', 'G1', 'H1', 'J1', 'A2', 'B2',
+        moves = ['A1', 'B1', 'C1', 'D1', 'E1', 'F1', 'G1', 'H1', 'J1', 'A2', 'B2',
                  'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'J2', 'A3', 'B3', 'C3', 'D3',
                  'E3', 'F3', 'G3', 'H3', 'J3', 'A4', 'B4', 'C4', 'D4', 'E4', 'F4',
                  'G4', 'H4', 'J4', 'A5', 'B5', 'C5', 'D5', 'E5', 'F5', 'G5', 'H5',
@@ -255,7 +276,7 @@ class myPlayer(PlayerInterface):
                  'F9', 'G9', 'H9', 'J9', 'PASS']
 
         if self._board.is_game_over():
-            res=self._board.result()
+            res = self._board.result()
             if res == "1-0":
                 return -500
             if res == "0-1":
@@ -264,16 +285,16 @@ class myPlayer(PlayerInterface):
                 return 0
 
         if depth == 0:
-            res=self.evaluate(moves, maximizePlayer, move)
+            res = self.evaluate(moves, maximizePlayer, move)
             # print("REEEEEEEEEEES ", res)
             return res
 
         # AMI
         if maximizePlayer == True:
             for move in self._board.legal_moves():
-                end=timeit.default_timer()
+                end = timeit.default_timer()
                 self._board.push(move)
-                alpha=max(alpha, self.alphabeta(
+                alpha = max(alpha, self.alphabeta(
                     alpha, beta, False, depth - 1, move, start))
                 self._board.pop()
                 if alpha >= beta:
@@ -283,9 +304,9 @@ class myPlayer(PlayerInterface):
         # ENNEMI
         elif maximizePlayer == False:
             for move in self._board.legal_moves():
-                end=timeit.default_timer()
+                end = timeit.default_timer()
                 self._board.push(move)
-                beta=min(beta, self.alphabeta(
+                beta = min(beta, self.alphabeta(
                     alpha, beta, True, depth - 1, move, start))
                 self._board.pop()
                 if alpha >= beta:
@@ -294,10 +315,10 @@ class myPlayer(PlayerInterface):
 
     def evaluate(self, moves, maximizePlayer, move):
 
-        black_moves=[]
-        white_moves=[]
-        last_move=move
-        res=0
+        black_moves = []
+        white_moves = []
+        last_move = move
+        res = 0
 
         # if self._board.next_player() == self._board._BLACK:
         #     next_player = "BLACK"
@@ -311,19 +332,19 @@ class myPlayer(PlayerInterface):
         # else:
         #     ami = -1
         #     ennemi = 1
-        ami=1
-        ennemi=-1
+        ami = 1
+        ennemi = -1
         # On remplit les tableau de noirs et de blancs présents sur le plateau
         for move in moves:
-            ufcoord=Goban.Board.name_to_coord(move)
-            x=ufcoord[0]
-            y=ufcoord[1]
+            ufcoord = Goban.Board.name_to_coord(move)
+            x = ufcoord[0]
+            y = ufcoord[1]
             if self._board[Goban.Board.flatten((x, y))] == self._board._BLACK:
                 black_moves.append(move)
         for move in moves:
-            ufcoord=Goban.Board.name_to_coord(move)
-            x=ufcoord[0]
-            y=ufcoord[1]
+            ufcoord = Goban.Board.name_to_coord(move)
+            x = ufcoord[0]
+            y = ufcoord[1]
             if self._board[Goban.Board.flatten((x, y))] == self._board._WHITE:
                 white_moves.append(move)
 
@@ -338,14 +359,14 @@ class myPlayer(PlayerInterface):
         #     return res
 
         if self._count < 4:  # Evaluation Fuseki pour les premiers coups
-            opening=Opening.Opening(
+            opening = Opening.Opening(
                 self._board, self._mycolor, black_moves, white_moves, self._black_goban, self._white_goban)
-            res=opening.evaluate_opening()
+            res = opening.evaluate_opening()
             return res
         else:
-            middle=MiddleGame.MiddleGame(
+            middle = MiddleGame.MiddleGame(
                 self._board, self._mycolor, self._count, black_moves, white_moves, self._black_goban, self._white_goban)
-            res=middle.evaluation()
+            res = middle.evaluation()
             return res
 
         # # On évalue la position des pions NOIRS sur le plateau
@@ -460,8 +481,8 @@ class myPlayer(PlayerInterface):
         self._board.push(Goban.Board.name_to_flat(move))
 
     def newGame(self, color):
-        self._mycolor=color
-        self._opponent=Goban.Board.flip(color)
+        self._mycolor = color
+        self._opponent = Goban.Board.flip(color)
 
     def endGame(self, winner):
         if self._mycolor == winner:
