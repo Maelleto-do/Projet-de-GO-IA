@@ -65,9 +65,9 @@ class myPlayer(PlayerInterface):
 
     def getPlayerMove(self):
 
-        max = -100000000
-        alpha = -100000000
-        beta = +100000000
+        max = -100000000000
+        alpha = -100000000000
+        beta = +100000000000
         depth = 10
         best_move = 0
         max_time = 3
@@ -131,6 +131,7 @@ class myPlayer(PlayerInterface):
 
         last_val = 0
 
+        
         self._start = timeit.default_timer()
         while (self._end - self._start) <= max_time:
             for move in self._board.legal_moves():
@@ -145,7 +146,6 @@ class myPlayer(PlayerInterface):
                     alpha = val
                     self._last_best_move = move
             depth += 1
-        
 
         best_move = self._last_best_move
 

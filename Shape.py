@@ -73,6 +73,7 @@ class Shape:
 
         return res >= 3
 
+
     def _diamond(self, color):
         moves = []
         if color == "BLACK":
@@ -106,8 +107,9 @@ class Shape:
                     checked.append(n)
         return count
 
-    # Fermer territoire
+  
 
+    # Fermer territoire
     def _is_nobi(self, x, y, last_move):
         res = False
         if(((x == last_move[0] + 1) or (x == last_move[0] - 1)) and (y == last_move[1])):
