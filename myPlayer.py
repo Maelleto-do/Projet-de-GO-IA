@@ -139,8 +139,8 @@ class myPlayer(PlayerInterface):
                     alpha, beta, False, depth-1, move, self._start)
                 self._board.pop()
                 self._end = timeit.default_timer()
-                print("LAAAAAAAAA end - start  ", self._end - self._start, "depth = ",
-                  depth, "move ", Goban.Board.flat_to_name(self._last_best_move))
+                # print("LAAAAAAAAA end - start  ", self._end - self._start, "depth = ",
+                #   depth, "move ", Goban.Board.flat_to_name(self._last_best_move))
                 if val > alpha:
                     alpha = val
                     self._last_best_move = move

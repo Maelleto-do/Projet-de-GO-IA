@@ -32,7 +32,7 @@ class MiddleGame:
         neighbors = [
             c for c in neighbors_coord if self._board._isOnBoard(c[0], c[1])]
         for n in neighbors:
-            if self._board[Goban.Board.flatten((n[0], n[1]))] == 0:
+            if (self._board[Goban.Board.flatten((n[0], n[1]))] == 0) or not self._board._isOnBoard(n[0], n[1]):
                 lib = lib + 1
         return lib
 
@@ -77,26 +77,33 @@ class MiddleGame:
                 self.get_last_enemy("WHITE"))
             last_black = Goban.Board.name_to_coord(
                 self.get_last_enemy("BLACK"))
-            if territory.distance(last_white, last_black) <= 2:
-                for move in self._black_moves:
-                    ufcoord = Goban.Board.name_to_coord(move)
-                    x_black = ufcoord[0]
-                    y_black = ufcoord[1]
-                    if shape._is_tobi(x_black, y_black, last_black) or shape._is_nobi(x_black, y_black, last_black):
-                        black = black + 3000
+            # if territory.distance(last_white, last_black) <= 2:
+            #     for move in self._black_moves:
+            #         ufcoord = Goban.Board.name_to_coord(move)
+            #         x_black = ufcoord[0]
+            #         y_black = ufcoord[1]
+            #         if shape._is_tobi(x_black, y_black, last_black) or shape._is_nobi(x_black, y_black, last_black):
+            #             black = black + 3000
+            for move in self._white_moves:
+                if shape._is_atari_white(Goban.Board.name_to_coord(move)):
+                    print("ATARIIIIIIIIIIIIIIIIII")
+                    black += 5000
 
         if (self._white_goban != []):
             last_white = Goban.Board.name_to_coord(
                 self.get_last_enemy("WHITE"))
             last_black = Goban.Board.name_to_coord(
                 self.get_last_enemy("BLACK"))
-            if territory.distance(last_white, last_black) <= 2:
-                for move in self._white_moves:
-                    ufcoord = Goban.Board.name_to_coord(move)
-                    x_white = ufcoord[0]
-                    y_white = ufcoord[1]
-                    if shape._is_tobi(x_white, y_white, last_white) or shape._is_nobi(x_white, y_white, last_white):
-                        white = white + 3000
+            # if territory.distance(last_white, last_black) <= 2:
+            #     for move in self._white_moves:
+            #         ufcoord = Goban.Board.name_to_coord(move)
+            #         x_white = ufcoord[0]
+            #         y_white = ufcoord[1]
+            #         if shape._is_tobi(x_white, y_white, last_white) or shape._is_nobi(x_white, y_white, last_white):
+            #             white = white + 3000
+            for move in self._black_moves:
+                if shape._is_atari_black(Goban.Board.name_to_coord(move)):
+                    white += 5000
 
         # Objectif : minimiser les libertés de l'adversaire
         white = white + self.liberties_white() + self.nb_white()
