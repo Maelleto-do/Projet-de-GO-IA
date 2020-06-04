@@ -156,6 +156,10 @@ class myPlayer(PlayerInterface):
 
         self._board.push(best_move)
         self._count = self._count + 1
+
+        for move in self._black_goban:
+            stringNumber = self._board._getStringOfStone(move)
+            print(Goban.Board.flat_to_name(move), "est dans la string ", self._board._stringUnionFind[move], " et ses libertés ", self._board._stringLiberties[stringNumber])
         return Goban.Board.flat_to_name(best_move)
 
     def alphabeta(self, alpha, beta, maximizePlayer, depth, move, start):

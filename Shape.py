@@ -73,43 +73,83 @@ class Shape:
 
         return res >= 3
 
-
-    def _diamond(self, color):
-        moves = []
-        if color == "BLACK":
-            moves = self._black_moves
-        else:
-            moves = self._white_moves
-
+    def _diamond(self, move, color):
         res = False
-        count = 0
-        checked = []
 
-        for move in moves:
-            coord = Goban.Board.name_to_coord(move)
-            x = coord[0]
-            y = coord[1]
-            neighbors_coord = ((x+1, y), (x-1, y), (x, y+1), (x, y-1))
-            neighbors = [
-                c for c in neighbors_coord if self._board._isOnBoard(c[0], c[1])]
+        coord = Goban.Board.name_to_coord(move)
+        x = coord[0]
+        y = coord[1]
 
-            for n in neighbors:
-                if color == "BLACK":
-                    if (self._board[Goban.Board.flatten((n[0], n[1]))] == self._board._BLACK) and (n not in checked):
-                        res = True
-                else:
-                    if (self._board[Goban.Board.flatten((n[0], n[1]))] == self._board._WHITE) and (n not in checked):
-                        res = True
-            if res:
-                count += 1
-                checked.append(coord)
-                for n in neighbors:
-                    checked.append(n)
-        return count
+        south = ((x, y+2), (x+1, y+1), (x-1, y+1))
+        neighbors_1 = [
+            c for c in south if self._board._isOnBoard(c[0], c[1])]
 
-  
+        north = ((x, y-2), (x+1, y-1), (x-1, y-1))
+        neighbors_2 = [
+            c for c in north if self._board._isOnBoard(c[0], c[1])]
 
-    # Fermer territoire
+        east = ((x-2, y), (x-1, y+1), (x-1, y-1))
+        neighbors_3 = [
+            c for c in east if self._board._isOnBoard(c[0], c[1])]
+
+        west = ((x+2, y), (x+1, y+1), (x+1, y-1))
+        neighbors_4 = [
+            c for c in west if self._board._isOnBoard(c[0], c[1])]
+
+
+        if color == "BLACK":
+            # move ferme le diamant au sud
+            count_n = 0
+            for n in neighbors_1:
+                    if self._board[Goban.Board.flatten((n[0], n[1]))] == self._board._BLACK:
+                            count_n +=1
+            if count_n == 3: return True
+                # move ferme le diamant au nord
+            count_s = 0
+            for n in neighbors_2:
+                    if self._board[Goban.Board.flatten((n[0], n[1]))] == self._board._BLACK:
+                            count_s +=1
+            if count_s == 3: return True
+                # move ferme le diamant à l'est
+            count_e = 0
+            for n in neighbors_3:
+                    if self._board[Goban.Board.flatten((n[0], n[1]))] == self._board._BLACK:
+                            count_e +=1
+            if count_e == 3: return True
+                # move ferme le diamant à l'ouest
+            count_w = 0
+            for n in neighbors_4:
+                    if self._board[Goban.Board.flatten((n[0], n[1]))] == self._board._BLACK:
+                            count_w +=1
+            if count_w == 3: return True
+        else:
+            # move ferme le diamant au sud
+            count_n = 0
+            for n in neighbors_1:
+                    if self._board[Goban.Board.flatten((n[0], n[1]))] == self._board._WHITE:
+                            count_n +=1
+            if count_n == 3: return True
+                # move ferme le diamant au nord
+            count_s = 0
+            for n in neighbors_2:
+                    if self._board[Goban.Board.flatten((n[0], n[1]))] == self._board._WHITE:
+                            count_s +=1
+            if count_s == 3: return True
+                # move ferme le diamant à l'est
+            count_e = 0
+            for n in neighbors_3:
+                    if self._board[Goban.Board.flatten((n[0], n[1]))] == self._board._WHITE:
+                            count_e +=1
+            if count_e == 3: return True
+                # move ferme le diamant à l'ouest
+            count_w = 0
+            for n in neighbors_4:
+                    if self._board[Goban.Board.flatten((n[0], n[1]))] == self._board._WHITE:
+                            count_w +=1
+            if count_w == 3: return True
+
+        return res
+
     def _is_nobi(self, x, y, last_move):
         res = False
         if(((x == last_move[0] + 1) or (x == last_move[0] - 1)) and (y == last_move[1])):
