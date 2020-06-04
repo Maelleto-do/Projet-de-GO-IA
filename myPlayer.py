@@ -70,6 +70,7 @@ class myPlayer(PlayerInterface):
         beta = +100000000
         depth = 10
         best_move = 0
+        max_time = 3
 
         moves = ['A1', 'B1', 'C1', 'D1', 'E1', 'F1', 'G1', 'H1', 'J1', 'A2', 'B2',
                  'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'J2', 'A3', 'B3', 'C3', 'D3',
@@ -131,7 +132,7 @@ class myPlayer(PlayerInterface):
         last_val = 0
 
         self._start = timeit.default_timer()
-        while (self._end - self._start) <= 4:
+        while (self._end - self._start) <= max_time:
             for move in self._board.legal_moves():
                 self._board.push(move)
                 val = self.alphabeta(
@@ -147,19 +148,6 @@ class myPlayer(PlayerInterface):
         
 
         best_move = self._last_best_move
-
-        # self._start = timeit.default_timer()
-        # # end = timeit.default_timer()
-        # for move in self._board.legal_moves():
-        #     self._board.push(move)
-        #     val = self.alphabeta(
-        #         alpha, beta, False, depth-1, move)
-        #     self._board.pop()
-        #     if val > alpha:
-        #         alpha = val
-        #         best_move = move
-        # self._end = timeit.default_timer()
-        # print("LAAAAAAAAA end - start  ", self._end - self._start, "depth = ", depth, "move ", Goban.Board.flat_to_name(self._last_best_move))
 
         if self._mycolor == Goban.Board._BLACK:
             self._black_goban.append(best_move)
