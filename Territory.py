@@ -47,8 +47,16 @@ class Territory:
         return count
 
 
-
-
+    def _in_border(self, move):
+        coord = Goban.Board.name_to_coord(move)
+        x = coord[0]
+        y = coord[1]
+        res = False
+        if (0 <= x <= 7) and ( (y == 0) or (y == 7)):
+            res = True
+        elif (0 <= y <= 7) and ( (y == 0) or (y == 7)):
+            res = True
+        return res
 
     def in_N(self, x, y):
         return (3 <= x <= 5) and (6 <= y <= 8)

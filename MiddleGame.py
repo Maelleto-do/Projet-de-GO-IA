@@ -97,13 +97,29 @@ class MiddleGame:
             for move in self._black_moves:
                 if shape._diamond(move, "BLACK") and self.liberties(Goban.Board.name_to_coord(move))[0] >= 2:
                     black += 400
-                # Une pièce blanche a trop de libertés, il faut l'encercler
+
                 for white_move in self._white_goban:
-                    if ((self.liberties(Goban.Board.name_to_coord(white_move))[0] >= 2) 
-                        and (move in self.liberties(Goban.Board.name_to_coord(move))[1])):
+                    # Une pièce blanche a trop de libertés, il faut l'encercler
+                    if ((self.liberties(Goban.Board.name_to_coord(white_move))[0] >= 2)
+                            and (move in self.liberties(Goban.Board.name_to_coord(move))[1])):
                         black += 900
-                       
-            # Un coup joué par Noir se retrouve en atari
+                    # Si elle n'a plus qu'une seule liberté, il faut la capturer pour capturer des pièces
+                    if ((self.liberties(Goban.Board.name_to_coord(white_move))[0] >= 2)
+                            and (move in self.liberties(Goban.Board.name_to_coord(move))[1])):
+                        black += 900
+
+                if not territory._in_border(move):
+                    black += 400
+
+                if shape.living_group(move, "BLACK"):
+                    black += 2000
+
+                if (shape._is_kosumi(move, last_black) 
+                or shape._is_nobi(move, last_black) or shape._is_tobi(move, last_black)):
+                    print("OUIIIIIIIIIII ", move, Goban.Board.coord_to_name(last_black))
+                    black += 900
+
+                    # Un coup joué par Noir se retrouve en atari
             for move in self._black_goban:
                 black_coord = Goban.Board.unflatten(move)
                 if shape._is_atari_black(black_coord):
@@ -132,10 +148,9 @@ class MiddleGame:
                     white += 400
                 # Une pièce blanche a trop de libertés, il faut l'encercler
                 for black_move in self._black_goban:
-                    if ((self.liberties(Goban.Board.name_to_coord(black_move))[0] >= 2) 
-                        and (move in self.liberties(Goban.Board.name_to_coord(move))[1])):
+                    if ((self.liberties(Goban.Board.name_to_coord(black_move))[0] >= 2)
+                            and (move in self.liberties(Goban.Board.name_to_coord(move))[1])):
                         white += 900
-                       
 
             # Un coup joué par Blanc se retrouve en atari
             for move in self._white_goban:
