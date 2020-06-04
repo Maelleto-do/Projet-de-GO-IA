@@ -84,10 +84,13 @@ class MiddleGame:
             #         y_black = ufcoord[1]
             #         if shape._is_tobi(x_black, y_black, last_black) or shape._is_nobi(x_black, y_black, last_black):
             #             black = black + 3000
+            # for move in self._board.legal_moves():
+            #     print("LIVIIIIIIIIIIIIIIIIIIING")
+            #     if shape._living_group_black(move): black += 6000
+
             for move in self._white_moves:
                 if shape._is_atari_white(Goban.Board.name_to_coord(move)):
-                    print("ATARIIIIIIIIIIIIIIIIII")
-                    black += 5000
+                    black += 500
 
         if (self._white_goban != []):
             last_white = Goban.Board.name_to_coord(
@@ -103,11 +106,11 @@ class MiddleGame:
             #             white = white + 3000
             for move in self._black_moves:
                 if shape._is_atari_black(Goban.Board.name_to_coord(move)):
-                    white += 5000
+                    white += 500
 
         # Objectif : minimiser les libertés de l'adversaire
-        white = white + self.liberties_white() + self.nb_white()
-        black = black + self.liberties_black() + self.nb_black()
+        white = white + self.liberties_white() + self._board._capturedWHITE + 1000*(shape._diamond("BLACK"))
+        black = black + self.liberties_black() + self._board._capturedBLACK + 1000*(shape._diamond("WHITE"))
 
         if self._mycolor == Goban.Board._BLACK:
             res = black - white

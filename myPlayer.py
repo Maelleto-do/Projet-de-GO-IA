@@ -253,7 +253,7 @@ class myPlayer(PlayerInterface):
         #             break
         #     return res
 
-        if self._count < 4:  # Evaluation Fuseki pour les premiers coups
+        if self._count < 2:  # Evaluation Fuseki pour les premiers coups
             opening = Opening.Opening(
                 self._board, self._mycolor, black_moves, white_moves, self._black_goban, self._white_goban)
             res = opening.evaluate_opening()

@@ -20,6 +20,7 @@ class Territory:
         dist = np.sqrt( ((A[0] - B[0])**2) + ((A[1] - B[1])**2) )
         return dist
 
+
     def in_N(self, x, y):
         return (3 <= x <= 5) and (6 <= y <= 8)
 
