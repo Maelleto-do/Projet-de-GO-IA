@@ -31,7 +31,7 @@ class MiddleGame:
         neighbors = [
             c for c in neighbors_coord if self._board._isOnBoard(c[0], c[1])]
         for n in neighbors:
-            if (self._board[Goban.Board.flatten((n[0], n[1]))] == 0) or not self._board._isOnBoard(n[0], n[1]):
+            if (self._board[Goban.Board.flatten((n[0], n[1]))] == 0) and self._board._isOnBoard(n[0], n[1]):
                 lib = lib + 1
             else:
                 liberties.append(n)
@@ -102,22 +102,25 @@ class MiddleGame:
                     # Une pièce blanche a trop de libertés, il faut l'encercler
                     if ((self.liberties(Goban.Board.name_to_coord(white_move))[0] >= 2)
                             and (move in self.liberties(Goban.Board.name_to_coord(move))[1])):
-                        black += 900
+                        black += 2000
                     # Si elle n'a plus qu'une seule liberté, il faut la capturer pour capturer des pièces
-                    if ((self.liberties(Goban.Board.name_to_coord(white_move))[0] >= 2)
+                    if ((self.liberties(Goban.Board.name_to_coord(white_move))[0] == 1)
                             and (move in self.liberties(Goban.Board.name_to_coord(move))[1])):
-                        black += 900
+                        black += 2000
 
                 if not territory._in_border(move):
                     black += 400
 
-                if shape.living_group(move, "BLACK"):
-                    black += 2000
+                # if shape.living_group(move, "BLACK"):
+                #     black += 2000
 
-                if (shape._is_kosumi(move, last_black) 
-                or shape._is_nobi(move, last_black) or shape._is_tobi(move, last_black)):
-                    print("OUIIIIIIIIIII ", move, Goban.Board.coord_to_name(last_black))
-                    black += 900
+                # if (shape._is_kosumi(move, last_black) 
+                # or shape._is_nobi(move, last_black) or shape._is_tobi(move, last_black)):
+                #     print("OUIIIIIIIIIII ", move, Goban.Board.coord_to_name(last_black))
+                #     black += 900
+
+            if not shape._bad_shape("BLACK"):
+                black += 2000
 
                     # Un coup joué par Noir se retrouve en atari
             for move in self._black_goban:
@@ -128,9 +131,10 @@ class MiddleGame:
                         ufcoord = Goban.Board.name_to_coord(move)
                         x_black = ufcoord[0]
                         y_black = ufcoord[1]
-                        # On fait un Nobi pour augmenter les libertés
+                        # On fait un Nobi pour augmenter les libertés, tout en faisant attention à ne pas 
+                        # se remettre Atari
                         if ufcoord in self.liberties(black_coord)[1] and self.liberties(black_coord)[0] >= 2:
-                            black = black + 1000
+                            black = black + 2000
 
 ################### Heuristique pour Blanc #########################
 
@@ -172,7 +176,7 @@ class MiddleGame:
         # Objectif : minimiser les libertés de l'adversaire
         white = white
         if self._mycolor == Goban.Board._BLACK:
-            res = black - white
+            res = black
         else:
             res = white - black
 

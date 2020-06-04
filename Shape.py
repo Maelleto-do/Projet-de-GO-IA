@@ -47,52 +47,81 @@ class Shape:
         x = coord[0]
         y = coord[1]
         if color == "BLACK":
-                for i in range(-2, 3):
-                        if (not self._board._isOnBoard(x+1, y+i)):
-                                count += 1
-                        elif (self._board[Goban.Board.flatten((x+1, y+i))] == 1):
-                                count += 1
-                        if not self._board._isOnBoard(x-1, y+i):
-                                count += 1
-                        elif (self._board[Goban.Board.flatten((x-1, y+i))] == 1):
-                                count += 1
-                for i in range(-2, 3, 2):
-                        if self._board._isOnBoard(x, y+i):
-                                if self._board[Goban.Board.flatten((x, y+i))] == 1:
-                                        count += 1
-                if self._board._isOnBoard(x, y+1) and self._board._isOnBoard(x, y-1):
-                        if (self._board[Goban.Board.flatten((x, y+1))] == 0
-                                and self._board[Goban.Board.flatten((x, y-1))] == 0):
-                                count += 1
-                if count == 15: 
-                        print("OUIIIIIIIIIIIIIIIIIIIIIIIIIIII")
-                        return True
+            for i in range(-2, 3):
+                if (not self._board._isOnBoard(x+1, y+i)):
+                    count += 1
+                elif (self._board[Goban.Board.flatten((x+1, y+i))] == 1):
+                    count += 1
+                if not self._board._isOnBoard(x-1, y+i):
+                    count += 1
+                elif (self._board[Goban.Board.flatten((x-1, y+i))] == 1):
+                    count += 1
+            for i in range(-2, 3, 2):
+                if self._board._isOnBoard(x, y+i):
+                    if self._board[Goban.Board.flatten((x, y+i))] == 1:
+                        count += 1
+            if self._board._isOnBoard(x, y+1) and self._board._isOnBoard(x, y-1):
+                if (self._board[Goban.Board.flatten((x, y+1))] == 0
+                        and self._board[Goban.Board.flatten((x, y-1))] == 0):
+                    count += 1
+            if count == 15:
+                print("OUIIIIIIIIIIIIIIIIIIIIIIIIIIII")
+                return True
 
         else:
-                for i in range(-2, 3):
-                        if (not self._board._isOnBoard(x+1, y+i)):
-                                count += 1
-                        elif (self._board[Goban.Board.flatten((x+1, y+i))] == 2):
-                                count += 1
-                        if not self._board._isOnBoard(x-1, y+i):
-                                count += 1
-                        elif (self._board[Goban.Board.flatten((x-1, y+i))] == 2):
-                                count += 1
-                for i in range(-2, 3, 2):
-                        if self._board._isOnBoard(x, y+i):
-                                if self._board[Goban.Board.flatten((x, y+i))] == 2:
-                                        count += 1
-                if self._board._isOnBoard(x, y+1) and self._board._isOnBoard(x, y-1):
-                        if (self._board[Goban.Board.flatten((x, y+1))] == 0
-                                and self._board[Goban.Board.flatten((x, y-1))] == 0):
-                                count += 1
-                if count == 15: 
-                        print("OUIIIIIIIIIIIIIIIIIIIIIIIIIIII")
-                        return True
-      
+            for i in range(-2, 3):
+                if (not self._board._isOnBoard(x+1, y+i)):
+                    count += 1
+                elif (self._board[Goban.Board.flatten((x+1, y+i))] == 2):
+                    count += 1
+                if not self._board._isOnBoard(x-1, y+i):
+                    count += 1
+                elif (self._board[Goban.Board.flatten((x-1, y+i))] == 2):
+                    count += 1
+            for i in range(-2, 3, 2):
+                if self._board._isOnBoard(x, y+i):
+                    if self._board[Goban.Board.flatten((x, y+i))] == 2:
+                        count += 1
+            if self._board._isOnBoard(x, y+1) and self._board._isOnBoard(x, y-1):
+                if (self._board[Goban.Board.flatten((x, y+1))] == 0
+                        and self._board[Goban.Board.flatten((x, y-1))] == 0):
+                    count += 1
+            if count == 15:
+                print("OUIIIIIIIIIIIIIIIIIIIIIIIIIIII")
+                return True
+
         return False
 
-
+    def _bad_shape(self, color):
+        if color == "BLACK":
+            for move in self._black_moves:
+                coord = self._board.name_to_coord(move)
+                x = coord[0]
+                y = coord[1]
+                if (self._board._isOnBoard(x, y) and self._board._isOnBoard(x, y-1)
+                        and self._board._isOnBoard(x+1, y) and self._board._isOnBoard(x+1, y-1)):
+                    if (
+                            self._board[Goban.Board.flatten((x, y))] == 1
+                            and self._board[Goban.Board.flatten((x+1, y))] == 1
+                            and self._board[Goban.Board.flatten((x+1, y-1))] == 1
+                            and self._board[Goban.Board.flatten((x, y-1))] == 1
+                    ):
+                        return True
+        else:
+            for move in self._white_moves:
+                coord = self._board.name_to_coord(move)
+                x = coord[0]
+                y = coord[1]
+                if (self._board._isOnBoard(x, y) and self._board._isOnBoard(x, y-1)
+                        and self._board._isOnBoard(x+1, y) and self._board._isOnBoard(x+1, y-1)):
+                    if (
+                            self._board[Goban.Board.flatten((x, y))] == 2
+                            and self._board[Goban.Board.flatten((x+1, y))] == 2
+                            and self._board[Goban.Board.flatten((x+1, y-1))] == 2
+                            and self._board[Goban.Board.flatten((x, y-1))] == 2
+                    ):
+                        return True
+        return False
 
     def _is_atari_white(self, white_coord):
 
