@@ -102,11 +102,14 @@ class MiddleGame:
                     # Une pièce blanche a trop de libertés, il faut l'encercler
                     if ((self.liberties(Goban.Board.name_to_coord(white_move))[0] >= 2)
                             and (move in self.liberties(Goban.Board.name_to_coord(move))[1])):
-                        black += 2000
+                        black += 900
                     # Si elle n'a plus qu'une seule liberté, il faut la capturer pour capturer des pièces
                     if ((self.liberties(Goban.Board.name_to_coord(white_move))[0] == 1)
                             and (move in self.liberties(Goban.Board.name_to_coord(move))[1])):
-                        black += 2000
+                        black += 900
+                    
+                    if territory._territory(move, "BLACK"):
+                        black += 900
 
                 if not territory._in_border(move):
                     black += 400
@@ -120,7 +123,9 @@ class MiddleGame:
                 #     black += 900
 
             if not shape._bad_shape("BLACK"):
-                black += 2000
+                black += 900
+
+        
 
                     # Un coup joué par Noir se retrouve en atari
             for move in self._black_goban:
@@ -134,7 +139,7 @@ class MiddleGame:
                         # On fait un Nobi pour augmenter les libertés, tout en faisant attention à ne pas 
                         # se remettre Atari
                         if ufcoord in self.liberties(black_coord)[1] and self.liberties(black_coord)[0] >= 2:
-                            black = black + 2000
+                            black = black + 1000
 
 ################### Heuristique pour Blanc #########################
 
@@ -172,11 +177,11 @@ class MiddleGame:
 
 ################## Calcul des pondérations #####################
 
-        black = black
+        black = black + 2000*self.liberties_black()
         # Objectif : minimiser les libertés de l'adversaire
-        white = white
+        white = white + 2000*self.liberties_white()
         if self._mycolor == Goban.Board._BLACK:
-            res = black
+            res = black - white
         else:
             res = white - black
 

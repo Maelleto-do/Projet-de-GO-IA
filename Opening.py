@@ -1,7 +1,6 @@
 import Territory
 import Goban
 import Shape
-import json
 
 
 class Opening:

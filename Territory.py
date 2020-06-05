@@ -46,18 +46,51 @@ class Territory:
                             count += 1
         return count
 
-
     def _in_border(self, move):
         coord = Goban.Board.name_to_coord(move)
         x = coord[0]
         y = coord[1]
         res = False
-        if (0 <= x <= 7) and ( (y == 0) or (y == 7)):
+        if (0 <= x <= 7) and ((y == 0) or (y == 7)):
             res = True
-        elif (0 <= y <= 7) and ( (y == 0) or (y == 7)):
+        elif (0 <= y <= 7) and ((y == 0) or (y == 7)):
             res = True
         return res
 
+    # Retourne vrai si un groupe de pierre délimite un territoire dans un coin
+    def _territory(self, move, color):
+        coord = Goban.Board.name_to_coord(move)
+        x = coord[0]
+        y = coord[1]
+        ymin = 0
+        ymax = 0
+        res = True
+
+        # Le pierre se situe à droite
+        if (5 <= x <= 6) and (self._board[Goban.Board.flatten((x, y))] == 1):
+            for i in range(y+1, 9):
+                # On s'arrête à la fin de la chaîne
+                if self._board[Goban.Board.flatten((x, i))] != 1:
+                    ymax = i-1
+                # La chaîne va jusqu'en haut
+                elif self._board[Goban.Board.flatten((x, 8))] == 1:
+                    ymax = 8
+            for i in range(y, -1, -1):
+                if self._board[Goban.Board.flatten((x, i))] != 1:
+                    ymin = i+1
+                elif self._board[Goban.Board.flatten((x, 0))] == 1:
+                    ymin = 0
+
+        for i in range(x+1, 9):
+            if not (((self._board[Goban.Board.flatten((i, ymax))] == 1) and (self._board[Goban.Board.flatten((i, ymin))] != 1))):
+                res = False
+        for i in range(x+1, 9):
+            for j in range(ymin+1, ymax):
+                if not (self._board[Goban.Board.flatten((i, j))] == 0):
+                    res = False   
+        return res
+
+                
     def in_N(self, x, y):
         return (3 <= x <= 5) and (6 <= y <= 8)
 
