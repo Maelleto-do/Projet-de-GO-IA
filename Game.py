@@ -3,7 +3,7 @@ import Territory
 import Shape
 
 
-class MiddleGame:
+class Game:
 
     def __init__(self, board, mycolor, count, black_moves, white_moves, black_goban, white_goban ):
         self._board = board

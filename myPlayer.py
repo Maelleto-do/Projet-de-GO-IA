@@ -14,7 +14,7 @@ import Territory
 import Opening
 import json
 import Shape
-import MiddleGame
+import Game
 import EndingGame
 
 
@@ -228,16 +228,16 @@ class myPlayer(PlayerInterface):
             if self._board[Goban.Board.flatten((x, y))] == self._board._WHITE:
                 white_moves.append(move)
 
-        if self._count < 5:  # Evaluation Fuseki (début de jeu) pour les premiers coups, on cherche à prendre le maximum de territoires
+        if self._count <= 4:  # Evaluation Fuseki (début de jeu) pour les premiers coups, on cherche à prendre le maximum de territoires
             opening = Opening.Opening(
                 self._board, self._mycolor, black_moves, white_moves, self._black_goban, self._white_goban)
             res = opening.evaluate_opening()
             return res
 
         else: # Appel de l'heuristique pour Chuban (milieu de jeu)
-            middle = MiddleGame.MiddleGame(
+            game = Game.Game(
                 self._board, self._mycolor, self._count, black_moves, white_moves, self._black_goban, self._white_goban )
-            res = middle.evaluation()
+            res = game.evaluation()
             return res
         return res
 
