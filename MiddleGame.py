@@ -5,7 +5,7 @@ import Shape
 
 class MiddleGame:
 
-    def __init__(self, board, mycolor, count, black_moves, white_moves, black_goban, white_goban):
+    def __init__(self, board, mycolor, count, black_moves, white_moves, black_goban, white_goban, _controled_intersections ):
         self._board = board
         self._black_goban = black_goban
         self._white_goban = white_goban
@@ -13,6 +13,7 @@ class MiddleGame:
         self._white_moves = white_moves
         self._mycolor = mycolor
         self._count = count
+        self._controled_intersections =  _controled_intersections 
 
     def get_last(self, color):
         if self._board._historyMoveNames != []:
@@ -64,7 +65,7 @@ class MiddleGame:
     def evaluation(self):
 
         territory = Territory.Territory(
-            self._board, self._black_moves, self._white_moves, self._black_goban, self._white_goban)
+            self._board, self._black_moves, self._white_moves, self._black_goban, self._white_goban, self._controled_intersections )
         shape = Shape.Shape(self._board, self._black_moves,
                             self._white_moves, self._black_goban, self._white_goban)
         black = 0
@@ -108,26 +109,13 @@ class MiddleGame:
                             and (move in self.liberties(Goban.Board.name_to_coord(move))[1])):
                         black += 900
                     
-                    if territory._territory(move, "BLACK"):
+                    if territory._territory_black(move):
                         black += 900
 
                 if not territory._in_border(move):
                     black += 400
-
-                # if shape.living_group(move, "BLACK"):
-                #     black += 2000
-
-                # if (shape._is_kosumi(move, last_black) 
-                # or shape._is_nobi(move, last_black) or shape._is_tobi(move, last_black)):
-                #     print("OUIIIIIIIIIII ", move, Goban.Board.coord_to_name(last_black))
-                #     black += 900
-
-            if not shape._bad_shape("BLACK"):
-                black += 900
-
-        
-
-                    # Un coup joué par Noir se retrouve en atari
+                
+            # Un coup joué par Noir se retrouve en atari
             for move in self._black_goban:
                 black_coord = Goban.Board.unflatten(move)
                 if shape._is_atari_black(black_coord):
@@ -177,7 +165,11 @@ class MiddleGame:
 
 ################## Calcul des pondérations #####################
 
-        black = black + 2000*self.liberties_black()
+        # if self._controled_intersections != []:
+        #     print("TERRITORIES ", [Goban.Board.flat_to_name(Goban.Board.flatten(c)) for c in self._controled_intersections])
+
+
+        black = black + 2000*self.liberties_black() + 500*territory._count_controled_intersection_black()
         # Objectif : minimiser les libertés de l'adversaire
         white = white + 2000*self.liberties_white()
         if self._mycolor == Goban.Board._BLACK:

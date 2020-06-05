@@ -7,12 +7,14 @@ import numpy as np
 
 class Territory:
 
-    def __init__(self, board, black_moves, white_moves, black_goban, white_goban):
+    def __init__(self, board, black_moves, white_moves, black_goban, white_goban, _controled_intersections):
         self._board = board
         self._black_moves = black_moves
         self._white_moves = white_moves
         self._black_moves = black_moves
         self._white_moves = white_moves
+        self._controled_intersections = _controled_intersections
+
 
     def distance(self, A, B):
         # print(" A : ", A)
@@ -57,8 +59,42 @@ class Territory:
             res = True
         return res
 
+    def _count_controled_intersection_black(self):
+        controled_intersection = 0
+        for move in self._black_moves:
+            coord = Goban.Board.name_to_coord(move)
+            x = coord[0]
+            y = coord[1] 
+            count_black = 0
+            count_empty = 0
+            count_boundaries = 0
+            
+            checked = []
+
+            for i in range(x-1, y+2):
+                for j in range(x-1, y+2):
+                    if not (i, j) in checked:
+                        if self._board._isOnBoard(i, j):
+                            if (self._board[Goban.Board.flatten((i, j))] == 1):
+                                count_black += 1
+                            elif (self._board[Goban.Board.flatten((i, j))] == 0):
+                                count_empty += 1
+                            elif (self._board[Goban.Board.flatten((i, j))] == 2):
+                                return 0
+                        else:
+                            count_boundaries += 1
+                        if (count_black + count_empty + count_boundaries == 6) and count_black >= 1:
+                            controled_intersection += 1
+                            checked.append((i, j))
+    
+        return controled_intersection
+                    
+
+        
+
+
     # Retourne vrai si un groupe de pierre délimite un territoire dans un coin
-    def _territory(self, move, color):
+    def _territory_black(self, move):
         coord = Goban.Board.name_to_coord(move)
         x = coord[0]
         y = coord[1]

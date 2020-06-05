@@ -5,13 +5,14 @@ import Shape
 
 class Opening:
 
-    def __init__(self, board, mycolor, black_moves, white_moves, black_goban, white_goban):
+    def __init__(self, board, mycolor, black_moves, white_moves, black_goban, white_goban, _controled_intersections):
         self._board = board
         self._black_goban = black_goban
         self._white_goban = white_goban
         self._black_moves = black_moves
         self._white_moves = white_moves
         self._mycolor = mycolor
+        self._controled_intersections = _controled_intersections
 
     def get_last_black(self):
         if (self._black_goban != []):
@@ -32,7 +33,7 @@ class Opening:
 
         res = 0
         territory = Territory.Territory(
-            self._board, self._black_moves, self._white_moves, self._black_goban, self._white_goban)
+            self._board, self._black_moves, self._white_moves, self._black_goban, self._white_goban, self._controled_intersections)
         shape = Shape.Shape(self._board, self._black_moves,
                             self._white_moves, self._black_goban, self._white_goban)
 

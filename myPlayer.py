@@ -15,6 +15,7 @@ import Opening
 import json
 import Shape
 import MiddleGame
+import EndingGame
 
 
 class myPlayer(PlayerInterface):
@@ -33,6 +34,7 @@ class myPlayer(PlayerInterface):
         self._last_best_move = 0
         self._start = 0
         self._end = 0
+        self._controled_intersections = []
 
     def getPlayerName(self):
         return "Random Player"
@@ -186,7 +188,6 @@ class myPlayer(PlayerInterface):
 
         if depth == 0:
             res = self.evaluate(moves, maximizePlayer, move)
-            # print("REEEEEEEEEEES ", res)
             return res
 
         # AMI
@@ -247,132 +248,27 @@ class myPlayer(PlayerInterface):
             if self._board[Goban.Board.flatten((x, y))] == self._board._WHITE:
                 white_moves.append(move)
 
-        # last_black_move = self._black_goban[-1]
-        # for i in range(0, 509):
-        #     for w_move in white_moves:
-        #         if (data_opening[i]['moves'][0 + 2*k] == last_black_move) and (data_opening[i]['moves'][0 + 3*k] == w_move):
-        #             res = res + 1000
-        #             k = k+1
-        #         else:
-        #             break
-        #     return res
 
         if self._count < 2:  # Evaluation Fuseki pour les premiers coups
             opening = Opening.Opening(
-                self._board, self._mycolor, black_moves, white_moves, self._black_goban, self._white_goban)
+                self._board, self._mycolor, black_moves, white_moves, self._black_goban, self._white_goban, self._controled_intersections)
             res = opening.evaluate_opening()
             return res
+        # if (((self._mycolor == Goban.Board._BLACK and 0 < self._board._capturedBLACK < self._board._capturedWHITE)
+        #     or (self._mycolor == Goban.Board._WHITE and 0 < self._board._capturedBLACK < self._board._capturedWHITE))):
         else:
             middle = MiddleGame.MiddleGame(
-                self._board, self._mycolor, self._count, black_moves, white_moves, self._black_goban, self._white_goban)
+                self._board, self._mycolor, self._count, black_moves, white_moves, self._black_goban, self._white_goban, self._controled_intersections )
             res = middle.evaluation()
             return res
-
-        # # On évalue la position des pions NOIRS sur le plateau
-        # for move in black_moves:
-        #     ufcoord = Goban.Board.name_to_coord(move)
-        #     x = ufcoord[0]
-        #     y = ufcoord[1]
-
-        #     # Les pions ne doivent pas être eparpillés sur le plateau
-        #     # On favorise deux pions côte à côte
-        #     neighbors_coord = ((x+1, y), (x-1, y), (x, y+1), (x, y-1))
-        #     neighbors = [
-        #         c for c in neighbors_coord if self._board._isOnBoard(c[0], c[1])]
-        #     for n in neighbors:
-        #         if self._board[Goban.Board.flatten((n[0], n[1]))] == self._board._BLACK:
-        #             res = res + ami*400
-
-        #     # Les pions alignés doivent former une diagonale
-        #     diag_coord = (x+1, y+1)
-        #     if self._board._isOnBoard(diag_coord[0], diag_coord[1]):
-        #         if self._board[Goban.Board.flatten((diag_coord[0], diag_coord[1]))] == self._board._BLACK:
-        #             res = res + ami*100
-
-        # # On évalue la position des pions BLANCS sur le plateau
-        # for move in white_moves:
-        #     ufcoord = Goban.Board.name_to_coord(move)
-        #     x = ufcoord[0]
-        #     y = ufcoord[1]
-
-        #     # Les pions ne doivent pas être eparpillés sur le plateau
-        #     # On favorise deux pions côte à côte
-        #     neighbors_coord = ((x+1, y), (x-1, y), (x, y+1), (x, y-1))
-        #     neighbors = [
-        #         c for c in neighbors_coord if self._board._isOnBoard(c[0], c[1])]
-        #     for n in neighbors:
-        #         if self._board[Goban.Board.flatten((n[0], n[1]))] == self._board._WHITE:
-        #             res = res + ennemi*400
-
-        #     # Les pions alignés doivent former une diagonale
-        #     diag_coord = (x+1, y+1)
-        #     if self._board._isOnBoard(diag_coord[0], diag_coord[1]):
-        #         if self._board[Goban.Board.flatten((diag_coord[0], diag_coord[1]))] == self._board._WHITE:
-        #             res = res + ennemi*100
+        # else:
+        #     print("ENDIIIIIIIING")
+        #     endingGame = EndingGame.EndingGame(
+        #         self._board, self._mycolor, self._count, black_moves, white_moves, self._black_goban, self._white_goban)
+        #     res = endingGame.evaluate_ending()           
+            
 
         return res
-
-    # # Fuseki
-    # def evaluate_opening(self, moves, black_moves, white_moves, move):
-
-    #     # On cherche à atteindre les coins et les bords
-    #     # et à placer des coups sur la deuxième ligne
-    #     res = 0
-
-    #     if self._board.next_player() == self._board._BLACK:
-    #         ami = 1
-    #         ennemi = 1
-    #     else:
-    #         ami = 1
-    #         ennemi = 1
-
-    #     b = 0
-
-    #     territory = Territory.Territory(self._board, black_moves, white_moves)
-
-    #     if self._board.next_player() == self._board._BLACK:
-    #         for move in black_moves:
-    #             ufcoord = Goban.Board.name_to_coord(move)
-    #             x = ufcoord[0]
-    #             y = ufcoord[1]
-    #             if self._black_goban != []:
-    #                 ufcoord_last = self.get_last_black()
-    #                 x_last = ufcoord_last[0]
-    #                 y_last = ufcoord_last[1]
-    #                 if ( abs(y_last - y) > 4):
-    #                     res = res + ami*1000
-    #                 if self._is_tobi(x, y, ufcoord_last):
-    #                     res = res + ami*1000
-    #             if (1 <= x <= 7) and (1 <= y <= 7): # se situe sur le deuxième ligne
-    #                 res = res + ami*1000
-    #             if ( ((1 <= x <= 2) or (6 <= x <= 7)) and ((1 <= y <= 2) or (6 <= y <= 7))): # dans un coin
-    #                 res = res + ami*1000
-    #             if ( territory.in_N(x, y) or territory.in_S(x, y) or territory.in_NE(x, y) or territory.in_SE(x, y) ):
-    #                 res = res + ami*1000
-
-    #             if ( (territory.north_territory(x, y)[0] == 1)
-    #             or (territory.south_territory(x, y)[0] == 1)
-    #             or (territory.east_territory(x, y)[0] == 1)
-    #             or (territory.west_territory(x, y)[0] == 1) ):
-    #                 res = res + ami*2000
-    #     else:
-    #         for move in white_moves:
-    #             ufcoord = Goban.Board.name_to_coord(move)
-    #             x = ufcoord[0]
-    #             y = ufcoord[1]
-    #             if (1 <= x <= 7) and (1 <= y <= 7): # se situe sur le deuxième ligne
-    #                 res = res + ennemi*1000
-    #             if ( ((1 <= x <= 2) or (6 <= x <= 7)) and ((1 <= y <= 2) or (6 <= y <= 7))): # dans un coin
-    #                 res = res + ennemi*1000
-    #             if ( territory.in_N(x, y) or territory.in_S(x, y) or territory.in_NE(x, y) or territory.in_SE(x, y) ):
-    #                 res = res + ennemi*1000
-    #             if ( (territory.north_territory(x, y)[1] == 1)
-    #                 or (territory.south_territory(x, y)[1] == 1)
-    #                 or (territory.east_territory(x, y)[1] == 1)
-    #                 or (territory.west_territory(x, y)[1] == 1) ):
-    #                 res = res + ennemi*2000
-
-    #     return res
 
     def playOpponentMove(self, move):
         print("Opponent played ", move)  # New here
