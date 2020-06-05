@@ -95,14 +95,45 @@ class Territory:
                                 return 0
                         else:
                             count_boundaries += 1
-                        if (count_black + count_empty + count_boundaries == 6) and count_black >= 1:
+                        if (count_black + count_empty + count_boundaries == 6) and count_black >= 3:
                             controled_intersection += 1
                             checked.append((i, j))
     
         return controled_intersection
                     
 
-        
+    """
+    Renvoie le nombre d'intersections contrôlés par Blanc
+    """
+    def _count_controled_intersection_white(self):
+        controled_intersection = 0
+        for move in self._white_moves:
+            coord = Goban.Board.name_to_coord(move)
+            x = coord[0]
+            y = coord[1] 
+            count_white = 0
+            count_empty = 0
+            count_boundaries = 0
+            
+            checked = []
+
+            for i in range(x-1, y+2):
+                for j in range(x-1, y+2):
+                    if not (i, j) in checked:
+                        if self._board._isOnBoard(i, j):
+                            if (self._board[Goban.Board.flatten((i, j))] == 2):
+                                count_white += 1
+                            elif (self._board[Goban.Board.flatten((i, j))] == 0):
+                                count_empty += 1
+                            elif (self._board[Goban.Board.flatten((i, j))] == 1):
+                                return 0
+                        else:
+                            count_boundaries += 1
+                        if (count_white + count_empty + count_boundaries == 6) and count_white >= 3:
+                            controled_intersection += 1
+                            checked.append((i, j))
+    
+        return controled_intersection
 
 
     # Retourne vrai si un groupe de pierre délimite un territoire dans un coin

@@ -91,7 +91,9 @@ class MiddleGame:
         white = 0
 
 
-################### Heuristique pour Noir ########################
+        """""""""""""""""""""""""""""
+        Heuristique pour Noir
+        """""""""""""""""""""""""""""
 
         if (self._black_goban != []):
 
@@ -134,8 +136,9 @@ class MiddleGame:
                         if ufcoord in self.liberties(black_coord)[1] and self.liberties(black_coord)[0] >= 2:
                             black = black + 1000
 
-################### Heuristique pour Blanc #########################
-
+        """""""""""""""""""""""""""""
+        Heuristique pour Blanc
+        """""""""""""""""""""""""""""
         if (self._white_goban != []):
 
             # Mise un d'une pierre de l'adversaire en Atari
@@ -178,11 +181,12 @@ class MiddleGame:
                             white = white + 1000
 
 
-################## Calcul des pondérations #####################
+        """""""""""""""""""""""""""""
+        Calcul des pondérations
+        """""""""""""""""""""""""""""
+        black = black + 2000*self.liberties_black() + 1000*territory._count_controled_intersection_black()
 
-        black = black + 2000*self.liberties_black() + 500*territory._count_controled_intersection_black()
-
-        white = white + 2000*self.liberties_white()
+        white = white + 2000*self.liberties_white() + 1000*territory._count_controled_intersection_white()
 
 
         if self._mycolor == Goban.Board._BLACK:

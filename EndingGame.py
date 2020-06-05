@@ -78,9 +78,11 @@ class EndingGame:
         black = 0
         white = 0
 
-################### Heuristique pour Noir ########################
 
-        # Heuristique pour Noir
+        """""""""""""""""""""""""""""
+        Heuristique pour Noir
+        """""""""""""""""""""""""""""
+
         if (self._black_goban != []):
             last_white = Goban.Board.name_to_coord(
                 self.get_last("WHITE"))
@@ -113,7 +115,10 @@ class EndingGame:
                         if ufcoord in self.liberties(black_coord)[1] and self.liberties(black_coord)[0] >= 2:
                             black = black + 2000
 
-################### Heuristique pour Blanc #########################
+
+        """""""""""""""""""""""""""""
+        Heuristique pour Blanc
+        """""""""""""""""""""""""""""
 
         if (self._white_goban != []):
             last_white = Goban.Board.name_to_coord(
