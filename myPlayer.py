@@ -34,7 +34,6 @@ class myPlayer(PlayerInterface):
         self._last_best_move = 0
         self._start = 0
         self._end = 0
-        self._controled_intersections = []
 
     def getPlayerName(self):
         return "Random Player"
@@ -72,16 +71,8 @@ class myPlayer(PlayerInterface):
         beta = +100000000000
         depth = 10
         best_move = 0
-        max_time = 3
-
-        moves = ['A1', 'B1', 'C1', 'D1', 'E1', 'F1', 'G1', 'H1', 'J1', 'A2', 'B2',
-                 'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'J2', 'A3', 'B3', 'C3', 'D3',
-                 'E3', 'F3', 'G3', 'H3', 'J3', 'A4', 'B4', 'C4', 'D4', 'E4', 'F4',
-                 'G4', 'H4', 'J4', 'A5', 'B5', 'C5', 'D5', 'E5', 'F5', 'G5', 'H5',
-                 'J5', 'A6', 'B6', 'C6', 'D6', 'E6', 'F6', 'G6', 'H6', 'J6', 'A7',
-                 'B7', 'C7', 'D7', 'E7', 'F7', 'G7', 'H7', 'J7', 'A8', 'B8', 'C8',
-                 'D8', 'E8', 'F8', 'G8', 'H8', 'J8', 'A9', 'B9', 'C9', 'D9', 'E9',
-                 'F9', 'G9', 'H9', 'J9', 'PASS']
+        iterative_deepening_max_time = 3 
+    
 
         if self._board.is_game_over():
             print("Referee told me to play but the game is over!")
@@ -93,6 +84,11 @@ class myPlayer(PlayerInterface):
             else:
                 print("equal")
             return "PASS"
+
+
+
+
+        # BIBLIOTHEQUE D'OUVERTURE
 
         with open("games.json", 'r') as json_data:
             data_opening = json.load(json_data)
@@ -131,19 +127,17 @@ class myPlayer(PlayerInterface):
                         Goban.Board.name_to_coord(best_move)))
                     return best_move
 
-        last_val = 0
 
-        
+        # ITERATIVE DEEPENING
+        last_val = 0
         self._start = timeit.default_timer()
-        while (self._end - self._start) <= max_time:
+        while (self._end - self._start) <= iterative_deepening_max_time:
             for move in self._board.legal_moves():
                 self._board.push(move)
                 val = self.alphabeta(
-                    alpha, beta, False, depth-1, move, self._start)
+                    alpha, beta, False, depth-1)
                 self._board.pop()
                 self._end = timeit.default_timer()
-                # print("LAAAAAAAAA end - start  ", self._end - self._start, "depth = ",
-                #   depth, "move ", Goban.Board.flat_to_name(self._last_best_move))
                 if val > alpha:
                     alpha = val
                     self._last_best_move = move
@@ -159,12 +153,12 @@ class myPlayer(PlayerInterface):
         self._board.push(best_move)
         self._count = self._count + 1
 
-        # for move in self._black_goban:
-        #     stringNumber = self._board._getStringOfStone(move)
-        #     print(Goban.Board.flat_to_name(move), "est dans la string ", self._board._stringUnionFind[move], " et ses libertés ", self._board._stringLiberties[stringNumber])
         return Goban.Board.flat_to_name(best_move)
 
-    def alphabeta(self, alpha, beta, maximizePlayer, depth, move, start):
+
+
+
+    def alphabeta(self, alpha, beta, maximizePlayer, depth):
 
         moves = ['A1', 'B1', 'C1', 'D1', 'E1', 'F1', 'G1', 'H1', 'J1', 'A2', 'B2',
                  'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'J2', 'A3', 'B3', 'C3', 'D3',
@@ -175,19 +169,18 @@ class myPlayer(PlayerInterface):
                  'D8', 'E8', 'F8', 'G8', 'H8', 'J8', 'A9', 'B9', 'C9', 'D9', 'E9',
                  'F9', 'G9', 'H9', 'J9', 'PASS']
 
-        
 
         if self._board.is_game_over():
             res = self._board.result()
             if res == "1-0":
-                return -500
+                return -900
             if res == "0-1":
-                return 500
+                return 900
             else:
-                return 0
+                return self.evaluate(moves)
 
         if depth == 0:
-            res = self.evaluate(moves, maximizePlayer, move)
+            res = self.evaluate(moves)
             return res
 
         # AMI
@@ -195,7 +188,7 @@ class myPlayer(PlayerInterface):
             for move in self._board.legal_moves():
                 self._board.push(move)
                 alpha = max(alpha, self.alphabeta(
-                    alpha, beta, False, depth - 1, move, start))
+                    alpha, beta, False, depth - 1))
                 self._board.pop()
                 if alpha >= beta:
                     return beta
@@ -206,35 +199,22 @@ class myPlayer(PlayerInterface):
             for move in self._board.legal_moves():
                 self._board.push(move)
                 beta = min(beta, self.alphabeta(
-                    alpha, beta, True, depth - 1, move, start))
+                    alpha, beta, True, depth - 1))
                 self._board.pop()
                 self._end = timeit.default_timer()
                 if alpha >= beta:
                     return alpha
                 return beta
 
-    def evaluate(self, moves, maximizePlayer, move):
+
+
+    def evaluate(self, moves):
 
         black_moves = []
         white_moves = []
-        last_move = move
         res = 0
 
-        # if self._board.next_player() == self._board._BLACK:
-        #     next_player = "BLACK"
-        # else:
-        #     next_player = "WHITE"
-
-        # print("LAST MOVE ", self._board.flat_to_name(last_move))
-        # La fonction d'évaluation doit etre symétrique
-        # if maximizePlayer:
-
-        # else:
-        #     ami = -1
-        #     ennemi = 1
-        ami = 1
-        ennemi = -1
-        # On remplit les tableau de noirs et de blancs présents sur le plateau
+        # On remplit les tableau de noirs et de blancs présents sur le plateau lors de l'appel de l'heuristique
         for move in moves:
             ufcoord = Goban.Board.name_to_coord(move)
             x = ufcoord[0]
@@ -248,26 +228,17 @@ class myPlayer(PlayerInterface):
             if self._board[Goban.Board.flatten((x, y))] == self._board._WHITE:
                 white_moves.append(move)
 
-
-        if self._count < 2:  # Evaluation Fuseki pour les premiers coups
+        if self._count < 5:  # Evaluation Fuseki (début de jeu) pour les premiers coups, on cherche à prendre le maximum de territoires
             opening = Opening.Opening(
-                self._board, self._mycolor, black_moves, white_moves, self._black_goban, self._white_goban, self._controled_intersections)
+                self._board, self._mycolor, black_moves, white_moves, self._black_goban, self._white_goban)
             res = opening.evaluate_opening()
             return res
-        # if (((self._mycolor == Goban.Board._BLACK and 0 < self._board._capturedBLACK < self._board._capturedWHITE)
-        #     or (self._mycolor == Goban.Board._WHITE and 0 < self._board._capturedBLACK < self._board._capturedWHITE))):
-        else:
+
+        else: # Appel de l'heuristique pour Chuban (milieu de jeu)
             middle = MiddleGame.MiddleGame(
-                self._board, self._mycolor, self._count, black_moves, white_moves, self._black_goban, self._white_goban, self._controled_intersections )
+                self._board, self._mycolor, self._count, black_moves, white_moves, self._black_goban, self._white_goban )
             res = middle.evaluation()
             return res
-        # else:
-        #     print("ENDIIIIIIIING")
-        #     endingGame = EndingGame.EndingGame(
-        #         self._board, self._mycolor, self._count, black_moves, white_moves, self._black_goban, self._white_goban)
-        #     res = endingGame.evaluate_ending()           
-            
-
         return res
 
     def playOpponentMove(self, move):

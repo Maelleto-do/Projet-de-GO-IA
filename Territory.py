@@ -5,23 +5,28 @@ import Goban
 import numpy as np
 
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Cette classe permet de gérer les territoires et la répartition des pierres sur le Goban.
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 class Territory:
 
-    def __init__(self, board, black_moves, white_moves, black_goban, white_goban, _controled_intersections):
+    def __init__(self, board, black_moves, white_moves, black_goban, white_goban):
         self._board = board
         self._black_moves = black_moves
         self._white_moves = white_moves
         self._black_moves = black_moves
         self._white_moves = white_moves
-        self._controled_intersections = _controled_intersections
 
-
+    """
+    Distance entre deux pierres
+    """
     def distance(self, A, B):
-        # print(" A : ", A)
-        # print("B : ", B)
         dist = np.sqrt(((A[0] - B[0])**2) + ((A[1] - B[1])**2))
         return dist
 
+    """
+    Créer un groupe vivant (avec deux yeux) dans un coin 
+    """
     def create_living_territory_corner(self, move, color):
         count = 0
         if self.in_NE(move[0], move[1]):
@@ -48,6 +53,10 @@ class Territory:
                             count += 1
         return count
 
+
+    """
+    Revoie vrai si la pierre se trouve sur les bords, faux sinon.
+    """
     def _in_border(self, move):
         coord = Goban.Board.name_to_coord(move)
         x = coord[0]
@@ -59,6 +68,9 @@ class Territory:
             res = True
         return res
 
+    """
+    Renvoie le nombre d'intersections contrôlés par Noir
+    """
     def _count_controled_intersection_black(self):
         controled_intersection = 0
         for move in self._black_moves:

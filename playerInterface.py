@@ -12,7 +12,7 @@ class PlayerInterface():
         ''' Must return the name of your AI player.'''
         return "Not Defined"
 
-    def alphabeta(self, maximizePlayer, depth, move, start):
+    def alphabeta(self, maximizePlayer, depth):
         pass
 
     def getPlayerMove(self): 
@@ -31,11 +31,7 @@ class PlayerInterface():
         '''
         return "PASS" 
 
-    def evaluate_opening(self, moves, black_moves, white_moves, move):
-        pass
-
-
-    def evaluate(self, moves, maximizePlayer, move):
+    def evaluate(self, moves):
         pass
 
     def playOpponentMove(self, move): 

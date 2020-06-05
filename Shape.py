@@ -1,6 +1,9 @@
 import Goban
 
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Cette classe permet de gérer les formes dessinées par les pierres sur le plateau
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 class Shape:
 
     def __init__(self, board, black_moves, white_moves, black_goban, white_goban):
@@ -10,37 +13,10 @@ class Shape:
         self._black_moves = black_moves
         self._white_moves = white_moves
 
-#     def _living_group_black(self, move):
-#         res = False
-#         first_block = 0
-#         second_block = 0
-#         first_eye = Goban.Board.unflatten(move)
-#         x = first_eye[0]
-#         y = first_eye[1]
-#         neighbors_first_eye = [(x+1, y), (x-1, y), (x, y+1), (x, y-1),
-#                                (x+1, y+1), (x-1, y-1), (x-1, y+1), (x+1, y-1)]
 
-#         for n in neighbors_first_eye:
-#             if not self._board._isOnBoard(n[0], n[1]):
-#                 first_block += 1
-#             elif (self._board[Goban.Board.flatten((n[0], n[1]))] == self._board._BLACK):
-#                 first_block += 1
-#         # On regarde s'il y a un autre oeil
-#         possible_eyes = [(x+2, y), (x-2, y), (x, y+2), (x, y-2)]
-#         for n in possible_eyes:
-#             x = n[0]
-#             y = n[1]
-#             neighbors_second_eye = [(x+1, y), (x-1, y), (x, y+1), (x, y-1),
-#                                     (x+1, y+1), (x-1, y-1), (x-1, y+1), (x+1, y-1)]
-#             for n in neighbors_second_eye:
-#                 if not self._board._isOnBoard(n[0], n[1]):
-#                     second_block += 1
-#                 elif (self._board[Goban.Board.flatten((n[0], n[1]))] == 1):
-#                     second_block += 1
-#         if first_block + second_block == 16:
-#             res = True
-#         return res
-
+    """
+    Définit la forme d'un groupe vivant (groupe avec deux yeux ne pouvant être capturé)
+    """
     def living_group(self, move, color):
         count = 0
         coord = Goban.Board.name_to_coord(move)  # pierre au milieu
@@ -65,7 +41,6 @@ class Shape:
                         and self._board[Goban.Board.flatten((x, y-1))] == 0):
                     count += 1
             if count == 15:
-                print("OUIIIIIIIIIIIIIIIIIIIIIIIIIIII")
                 return True
 
         else:
@@ -87,11 +62,13 @@ class Shape:
                         and self._board[Goban.Board.flatten((x, y-1))] == 0):
                     count += 1
             if count == 15:
-                print("OUIIIIIIIIIIIIIIIIIIIIIIIIIIII")
                 return True
-
         return False
 
+    """
+    Les formes compactes en carré sont à proscrire.
+    Renvoie vraie si la forme est un carré plein, faux sinon.
+    """
     def _bad_shape(self, color):
         if color == "BLACK":
             for move in self._black_moves:
@@ -123,6 +100,10 @@ class Shape:
                         return True
         return False
 
+
+    """
+    Mise en Atari d'une pierre Blanche
+    """
     def _is_atari_white(self, white_coord):
 
         x = white_coord[0]
@@ -139,6 +120,9 @@ class Shape:
 
         return res >= 3
 
+    """
+    Mise en Atari d'une pierre Noire
+    """
     def _is_atari_black(self, black_coord):
 
         x = black_coord[0]
@@ -155,6 +139,10 @@ class Shape:
 
         return res >= 3
 
+    
+    """
+    Définit la forme du diamant
+    """
     def _diamond(self, move, color):
         res = False
 
@@ -239,6 +227,9 @@ class Shape:
 
         return res
 
+    """
+    Coup Nobi (pierres côte à côte)
+    """
     def _is_nobi(self, move, last_move):
         coord = Goban.Board.name_to_coord(move)
         x = coord[0]
@@ -250,7 +241,11 @@ class Shape:
             res = True
         return res
 
-    # S'étendre et fermer territoire
+  
+    """
+    Coup Tobi (saut en ligne droite)
+    Sert à s'étendre et fermer territoire
+    """  
     def _is_tobi(self, move, last_move):
         coord = Goban.Board.name_to_coord(move)
         x = coord[0]
@@ -262,7 +257,10 @@ class Shape:
             res = True
         return res
 
-    # Attaquer
+    """
+    Coup Kosumi (petit pas en diagonle)
+    Sert à attaquer
+    """ 
     def _is_kosumi(self, move, last_move):
         coord = Goban.Board.name_to_coord(move)
         x = coord[0]
@@ -274,7 +272,10 @@ class Shape:
             res = True
         return res
 
-    # Attaquer ou agrandir territoire
+    """
+    Coup Keima (saut en diagonale)
+    Sert à attaquer ou agrandir territoire
+    """ 
     def _is_keima(self, move, last_move):
         coord = Goban.Board.name_to_coord(move)
         x = coord[0]
