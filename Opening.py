@@ -14,14 +14,6 @@ class Opening:
         self._white_moves = white_moves
         self._mycolor = mycolor
 
-    def get_last_black(self):
-        if (self._black_goban != []):
-            return self._board.unflatten(self._black_goban[-1])
-
-    def get_last_white(self):
-        if (self._white_goban != []):
-            return self._board.unflatten(self._white_goban[-1])
-
 
     """
         Fuseki (Ouverture)
@@ -34,14 +26,15 @@ class Opening:
 
 
         res = 0
+        black = 0
+        white = 0
+
         territory = Territory.Territory(
             self._board, self._black_moves, self._white_moves, self._black_goban, self._white_goban)
         shape = Shape.Shape(self._board, self._black_moves,
                             self._white_moves, self._black_goban, self._white_goban)
 
 
-        black = 0
-        white = 0
         for move in self._black_moves:
             ufcoord = Goban.Board.name_to_coord(move)
             x = ufcoord[0]
@@ -59,7 +52,7 @@ class Opening:
             if (1 <= x <= 7) and (1 <= y <= 7): # pierres sur la deuxième ligne pour l'ouverture
                 white = white + 3000
 
-        # On maximise le nombre de territoires conquéris
+        # On maximise le nombre de territoires cardinaux conquéris
         black = black + territory.count_territories_black()
         white = white + territory.count_territories_white()
 

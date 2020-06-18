@@ -15,7 +15,6 @@ import Opening
 import json
 import Shape
 import Game
-import EndingGame
 
 
 class myPlayer(PlayerInterface):
@@ -28,25 +27,22 @@ class myPlayer(PlayerInterface):
     def __init__(self):
         self._board = Goban.Board()
         self._mycolor = None
-        self._black_goban = []
-        self._white_goban = []
-        self._count = 0
-        self._last_best_move = 0
+        self._black_goban = []  #Liste des coups réellement joué par Noir
+        self._white_goban = []  #Liste des coups réellement joué par Blanc
+        self._count = 0         #Numéro du tour
+
+        #Utilisé dans l'iterative-deepening
+        self._last_best_move = 0 
         self._start = 0
         self._end = 0
 
     def getPlayerName(self):
-        return "Random Player"
+        return "Maelle Toy-Riont"
 
-    def get_last_black(self):
-        if (self._black_goban != []):
-            return self._board.unflatten(self._black_goban[-1])
-
-    def get_last_white(self):
-        if (self._white_goban != []):
-            return self._board.unflatten(self._white_goban[-1])
-
-    def get_last_enemy(self, color):
+    """
+    Obtenir la dernière pierre posée par Noir ou Blanc
+    """
+    def get_last(self, color):
         if self._count == 0:
             return self._board._historyMoveNames[0]
         if self._count == 1:
@@ -63,6 +59,9 @@ class myPlayer(PlayerInterface):
                     return self._board._historyMoveNames[self._count * 2]
                 else:
                     return Goban.Board.coord_to_name(Goban.Board.unflatten(self._white_goban[-1]))
+
+
+
 
     def getPlayerMove(self):
 
@@ -86,14 +85,11 @@ class myPlayer(PlayerInterface):
             return "PASS"
 
 
-
-
         # BIBLIOTHEQUE D'OUVERTURE
-
         with open("games.json", 'r') as json_data:
             data_opening = json.load(json_data)
 
-        if self._count == 0 and self._mycolor == Goban.Board._BLACK:  # Premier coup à jouer pour noir
+        if self._count == 0 and self._mycolor == Goban.Board._BLACK:  # Premier coup à jouer pour Noir
             for l in range(0, 510):
                 i = randint(0, 510)
                 if data_opening[i]['winner'] == "B":
@@ -105,9 +101,9 @@ class myPlayer(PlayerInterface):
                         Goban.Board.name_to_coord(best_move)))
                     return best_move
 
-        if self._count == 0 and self._mycolor == Goban.Board._WHITE:  # Premier coup à jouer pour blanc
+        if self._count == 0 and self._mycolor == Goban.Board._WHITE:  # Premier coup à jouer pour Blanc
             for i in range(0, 510):
-                if data_opening[i]['moves'][0] == self.get_last_enemy("BLACK"):
+                if data_opening[i]['moves'][0] == self.get_last("BLACK"):
                     best_move = data_opening[i]['moves'][1]
                     self._board.push(Goban.Board.flatten(
                         Goban.Board.name_to_coord(data_opening[i]['moves'][1])))
@@ -116,9 +112,9 @@ class myPlayer(PlayerInterface):
                         Goban.Board.name_to_coord(best_move)))
                     return best_move
 
-        elif self._count == 1 and self._mycolor == Goban.Board._BLACK:  # Deuxième coup à jouer pour black
+        elif self._count == 1 and self._mycolor == Goban.Board._BLACK:  # Deuxième coup à jouer pour Noir
             for i in range(0, 510):
-                if data_opening[i]['moves'][1] == self.get_last_enemy("WHITE"):
+                if data_opening[i]['moves'][1] == self.get_last("WHITE"):
                     best_move = data_opening[i]['moves'][2]
                     self._board.push(Goban.Board.flatten(
                         Goban.Board.name_to_coord(data_opening[i]['moves'][2])))
@@ -234,7 +230,7 @@ class myPlayer(PlayerInterface):
             res = opening.evaluate_opening()
             return res
 
-        else: # Appel de l'heuristique pour Chuban (milieu de jeu)
+        else: # Appel de l'heuristique pour milieu et fin de jeu
             game = Game.Game(
                 self._board, self._mycolor, self._count, black_moves, white_moves, self._black_goban, self._white_goban )
             res = game.evaluation()

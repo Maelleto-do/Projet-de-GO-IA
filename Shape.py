@@ -8,8 +8,8 @@ class Shape:
 
     def __init__(self, board, black_moves, white_moves, black_goban, white_goban):
         self._board = board
-        self._black_moves = black_moves
-        self._white_moves = white_moves
+        self._black_goban = black_goban
+        self._white_goban = white_goban
         self._black_moves = black_moves
         self._white_moves = white_moves
 
@@ -64,6 +64,36 @@ class Shape:
             if count == 15:
                 return True
         return False
+
+    """
+    Créer un groupe vivant (avec deux yeux) dans un coin 
+    """
+    def create_living_territory_corner(self, move, color):
+        count = 0
+        if self.in_NE(move[0], move[1]):
+            if (move == (8, 8)):
+                if (self._board.__getitem__(Goban.Board.flatten((7, 8))) == 0) and (self._board.__getitem__(Goban.Board.flatten((8, 7))) == 0):
+                    if color == "BLACK":
+                        if ((self._board.__getitem__(Goban.Board.flatten((6, 8))) == 1) and (self._board.__getitem__(Goban.Board.flatten((7, 7))) == 1)
+                                and (self._board.__getitem__(Goban.Board.flatten((8, 6))) == 1)):
+                            count += 1
+                    else:
+                        if ((self._board.__getitem__(Goban.Board.flatten((6, 8))) == 2) and (self._board.__getitem__(Goban.Board.flatten((7, 7))) == 2)
+                                and (self._board.__getitem__(Goban.Board.flatten((8, 6))) == 2)):
+                            count += 1
+        elif self.in_SO(move[0], move[1]):
+            if (move == (0, 0)):
+                if (self._board.__getitem__(Goban.Board.flatten((1, 0))) == 0) and (self._board.__getitem__(Goban.Board.flatten((0, 1))) == 0):
+                    if color == "BLACK":
+                        if ((self._board.__getitem__(Goban.Board.flatten((2, 0))) == 1) and (self._board.__getitem__(Goban.Board.flatten((1, 1))) == 1)
+                                and (self._board.__getitem__(Goban.Board.flatten((0, 2))) == 1)):
+                            count += 1
+                    else:
+                        if ((self._board.__getitem__(Goban.Board.flatten((2, 0))) == 2) and (self._board.__getitem__(Goban.Board.flatten((1, 1))) == 2)
+                                and (self._board.__getitem__(Goban.Board.flatten((0, 2))) == 2)):
+                            count += 1
+        return count
+
 
     """
     Les formes compactes en carré sont à proscrire.

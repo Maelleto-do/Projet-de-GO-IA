@@ -14,13 +14,6 @@ class Game:
         self._mycolor = mycolor
         self._count = count
 
-    # Renvoie le dernier coup joué par color
-    def get_last(self, color):
-        if self._board._historyMoveNames != []:
-            if color == "BLACK":
-                return self._board._historyMoveNames[self._count * 2]
-            else:
-                return self._board._historyMoveNames[(self._count * 2) - 1]
 
     # Renvoie l'ensemble des libertés et le nombre de libertés d'une pierre de coordonées coord
     def liberties(self, coord):
@@ -34,8 +27,8 @@ class Game:
         for n in neighbors:
             if (self._board[Goban.Board.flatten((n[0], n[1]))] == 0) and self._board._isOnBoard(n[0], n[1]):
                 lib = lib + 1
-            else:
                 liberties.append(n)
+                
         return lib, liberties
 
     # Total du nombre de libertés des Blancs
@@ -67,7 +60,7 @@ class Game:
         return res
 
     """
-    Chuban (Milieu de Jeu)
+    Milieu et fin de Jeu
 
     On cherche à:
     - composer des formes en diamant
@@ -97,7 +90,7 @@ class Game:
 
         if (self._black_goban != []):
 
-            # Mise un d'une pierre de l'adversaire en Atari
+            # Mise d'une pierre adverse en Atari
             for move in self._white_moves:
                 if shape._is_atari_white(Goban.Board.name_to_coord(move)):
                     black += 900
@@ -116,7 +109,7 @@ class Game:
                         black += 900
                     # Si elle n'a plus qu'une seule liberté, il faut la capturer pour capturer des pierres blanches
                     if ((self.liberties(Goban.Board.name_to_coord(white_move))[0] == 1)
-                            and (move in self.liberties(Goban.Board.name_to_coord(move))[1])):
+                            and (move in self.liberties(Goban.Board.name_to_coord(white_move))[1])):
                         black += 900
                     
                 # On évite que les pierres soient placés près des bords
@@ -141,7 +134,7 @@ class Game:
         """""""""""""""""""""""""""""
         if (self._white_goban != []):
 
-            # Mise un d'une pierre de l'adversaire en Atari
+            # Mise d'une pierre adverse en Atari
             for move in self._black_moves:
                 if shape._is_atari_black(Goban.Board.name_to_coord(move)):
                     white += 900
@@ -160,7 +153,7 @@ class Game:
                         white += 900
                     # Si elle n'a plus qu'une seule liberté, il faut la capturer pour capturer des pierres noires
                     if ((self.liberties(Goban.Board.name_to_coord(black_move))[0] == 1)
-                            and (move in self.liberties(Goban.Board.name_to_coord(move))[1])):
+                            and (move in self.liberties(Goban.Board.name_to_coord(black_move))[1])):
                         white += 900
                     
                 # On évite que les pierres soient placés près des bords
@@ -184,10 +177,14 @@ class Game:
         """""""""""""""""""""""""""""
         Calcul des pondérations
         """""""""""""""""""""""""""""
-        black = black + 2000*self.liberties_black() + 1000*territory._count_controled_intersection_black()
+        if self._count < 15 : #Milieu de partie
+            black = black + 100*self.liberties_black() + 1000*territory._count_controled_intersection_black()
 
-        white = white + 2000*self.liberties_white() + 1000*territory._count_controled_intersection_white()
+            white = white + 100*self.liberties_white() + 1000*territory._count_controled_intersection_white()
+        else: #Fin de partie
+            black = black + 1000*self.liberties_black() + 500*territory._count_controled_intersection_black()
 
+            white = white + 1000*self.liberties_white() + 500*territory._count_controled_intersection_white()     
 
         if self._mycolor == Goban.Board._BLACK:
             return black - white

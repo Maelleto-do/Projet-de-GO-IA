@@ -12,8 +12,8 @@ class Territory:
 
     def __init__(self, board, black_moves, white_moves, black_goban, white_goban):
         self._board = board
-        self._black_moves = black_moves
-        self._white_moves = white_moves
+        self._black_goban = black_goban
+        self._white_goban = white_goban
         self._black_moves = black_moves
         self._white_moves = white_moves
 
@@ -24,38 +24,9 @@ class Territory:
         dist = np.sqrt(((A[0] - B[0])**2) + ((A[1] - B[1])**2))
         return dist
 
-    """
-    Créer un groupe vivant (avec deux yeux) dans un coin 
-    """
-    def create_living_territory_corner(self, move, color):
-        count = 0
-        if self.in_NE(move[0], move[1]):
-            if (move == (8, 8)):
-                if (self._board.__getitem__(Goban.Board.flatten((7, 8))) == 0) and (self._board.__getitem__(Goban.Board.flatten((8, 7))) == 0):
-                    if color == "BLACK":
-                        if ((self._board.__getitem__(Goban.Board.flatten((6, 8))) == 1) and (self._board.__getitem__(Goban.Board.flatten((7, 7))) == 1)
-                                and (self._board.__getitem__(Goban.Board.flatten((8, 6))) == 1)):
-                            count += 1
-                    else:
-                        if ((self._board.__getitem__(Goban.Board.flatten((6, 8))) == 2) and (self._board.__getitem__(Goban.Board.flatten((7, 7))) == 2)
-                                and (self._board.__getitem__(Goban.Board.flatten((8, 6))) == 2)):
-                            count += 1
-        elif self.in_SO(move[0], move[1]):
-            if (move == (0, 0)):
-                if (self._board.__getitem__(Goban.Board.flatten((1, 0))) == 0) and (self._board.__getitem__(Goban.Board.flatten((0, 1))) == 0):
-                    if color == "BLACK":
-                        if ((self._board.__getitem__(Goban.Board.flatten((2, 0))) == 1) and (self._board.__getitem__(Goban.Board.flatten((1, 1))) == 1)
-                                and (self._board.__getitem__(Goban.Board.flatten((0, 2))) == 1)):
-                            count += 1
-                    else:
-                        if ((self._board.__getitem__(Goban.Board.flatten((2, 0))) == 2) and (self._board.__getitem__(Goban.Board.flatten((1, 1))) == 2)
-                                and (self._board.__getitem__(Goban.Board.flatten((0, 2))) == 2)):
-                            count += 1
-        return count
-
 
     """
-    Revoie vrai si la pierre se trouve sur les bords, faux sinon.
+    Renvoie vrai si la pierre se trouve sur les bords, faux sinon
     """
     def _in_border(self, move):
         coord = Goban.Board.name_to_coord(move)
@@ -69,7 +40,7 @@ class Territory:
         return res
 
     """
-    Renvoie le nombre d'intersections contrôlés par Noir
+    Renvoie le nombre d'intersections contrôlées par Noir
     """
     def _count_controled_intersection_black(self):
         controled_intersection = 0
@@ -95,7 +66,7 @@ class Territory:
                                 return 0
                         else:
                             count_boundaries += 1
-                        if (count_black + count_empty + count_boundaries == 6) and count_black >= 3:
+                        if (count_black + count_empty + count_boundaries == 6) and count_black >= 1:
                             controled_intersection += 1
                             checked.append((i, j))
     
@@ -103,7 +74,7 @@ class Territory:
                     
 
     """
-    Renvoie le nombre d'intersections contrôlés par Blanc
+    Renvoie le nombre d'intersections contrôlées par Blanc
     """
     def _count_controled_intersection_white(self):
         controled_intersection = 0
@@ -129,14 +100,16 @@ class Territory:
                                 return 0
                         else:
                             count_boundaries += 1
-                        if (count_white + count_empty + count_boundaries == 6) and count_white >= 3:
+                        if (count_white + count_empty + count_boundaries == 6) and count_white >= 1:
                             controled_intersection += 1
                             checked.append((i, j))
     
         return controled_intersection
 
 
-    # Retourne vrai si un groupe de pierre délimite un territoire dans un coin
+    """
+    Retourne vrai si un groupe de pierres Noires délimite un territoire dans un coin    
+    """
     def _territory_black(self, move):
         coord = Goban.Board.name_to_coord(move)
         x = coord[0]
@@ -169,7 +142,10 @@ class Territory:
                     res = False   
         return res
 
-                
+    """
+    Afin de simplifier la gestion des territoires (en particulier dans Opening.py)
+    le plateau est découpé en 8 parties    
+    """          
     def in_N(self, x, y):
         return (3 <= x <= 5) and (6 <= y <= 8)
 
@@ -194,39 +170,10 @@ class Territory:
     def in_SE(self, x, y):
         return (6 <= x <= 8) and (0 <= y <= 2)
 
-    # True si attaque sur le territoire des Noirs
-    def adversary_attack_black(self, territory):
-        res = False
-        if territory == "N":
-            if self.north_territory[2]:
-                res = True
-        if territory == "S":
-            if not self.south_territory[2]:
-                res = True
-        if territory == "E":
-            if not self.east_territory[2]:
-                res = True
-        if territory == "O":
-            if not self.west_territory[2]:
-                res = True
-        if territory == "NE":
-            if not self.north_east_territory[2]:
-                res = True
-        if territory == "NO":
-            if not self.north_west_territory[2]:
-                res = True
-        if territory == "SE":
-            if not self.south_east_territory[2]:
-                res = True
-        if territory == "SO":
-            if not self.south_west_territory[2]:
-                res = True
-        return res
 
-
-# Return True si le territoire appartient à Noir, False sinon
-# Ainsi que le nombre de pièces dans chaque territoire
-
+    """
+    Nombre de territoires cardinaux détenus par Noir 
+    """
     def count_territories_black(self):
         count = 0
         if self.north_territory()[0] >= 1:
@@ -247,6 +194,9 @@ class Territory:
             count = count + 1
         return count
 
+    """
+    Nombre de territoires cardinaux détenus par Blanc
+    """
     def count_territories_white(self):
         count = 0
         if self.north_territory()[1] >= 1:
@@ -267,6 +217,11 @@ class Territory:
             count = count + 1
         return count
 
+
+    """
+    Fonctions permettant de définir si un territoire est contrôlé par 
+    les Blancs ou par les Noirs    
+    """
     def north_territory(self):
         b = 0
         w = 0
@@ -321,7 +276,6 @@ class Territory:
                 w = w + 1
         return b, w, b >= w
 
-    # Return True si le territoire appartient à Noir, False sinon
     def east_territory(self):
         b = 0
         w = 0
@@ -340,7 +294,6 @@ class Territory:
                 w = w + 1
         return b, w, b >= w
 
-    # Return True si le territoire appartient à Noir, False sinon
     def south_territory(self):
         b = 0
         w = 0
@@ -395,7 +348,6 @@ class Territory:
                 w = w + 1
         return b, w, b >= w
 
-    # Return True si le territoire appartient à Noir, False sinon
     def west_territory(self):
         b = 0
         w = 0
@@ -413,3 +365,6 @@ class Territory:
             if self.in_O(x, y):
                 w = w + 1
         return b, w, b >= w
+
+
+
